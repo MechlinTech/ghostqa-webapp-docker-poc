@@ -1,5 +1,47 @@
 import os
+import subprocess
+import psutil
+import re
+from colorama import init, Fore
 
+# Initialize colorama to work on Windows as well
+init()
+
+def parse_color_logs(log):
+    # Define a regular expression to match ANSI escape codes for colors
+    color_pattern = re.compile(r'\033\[(\d+)(;\d+)*m')
+
+    # Split the log into segments based on color codes
+    segments = color_pattern.split(log)
+
+    # Process each segment and print with appropriate color
+    for segment in segments:
+        if segment.startswith('\033['):
+            # Extract color code and apply the corresponding color
+            color_code = int(segment[2:-1].split(';')[0])
+            print_color(segment, color_code)
+        else:
+            # No color code, print as is
+            print(segment, end='')
+
+def print_color(text, color_code):
+    # Map color codes to colorama Fore constants
+    color_mapping = {
+        30: Fore.BLACK,
+        31: Fore.RED,
+        32: Fore.GREEN,
+        33: Fore.YELLOW,
+        34: Fore.BLUE,
+        35: Fore.MAGENTA,
+        36: Fore.CYAN,
+        37: Fore.WHITE,
+    }
+
+    # Print text with the corresponding color
+    color = color_mapping.get(color_code, Fore.RESET)
+    print(f"{color}{text}{Fore.RESET}", end='')
+
+# Example usage
 def create_directory(directory_path):
     """
     Check if a directory exists, and create it if it doesn't.
@@ -31,3 +73,98 @@ def get_full_path(file_or_directory):
 
 def convert_to_unix_path(file_path):
     return os.path.normpath(file_path).replace(os.sep, '/')
+
+
+def list_files_in_directory(directory_path):
+    """
+    List all files in a directory and return a list of their full paths.
+    
+    Parameters:
+    - directory_path (str): The path of the directory to list files from.
+    
+    Returns:
+    - list: A list of full paths of files in the directory.
+    """
+    files_list = []
+    
+    # Ensure the given path is a directory
+    if os.path.isdir(directory_path):
+        # Get the list of files in the directory
+        files = os.listdir(directory_path)
+        
+        # Create full paths for each file in the directory
+        files_list = [convert_to_unix_path(os.path.join(directory_path, file)) for file in files if os.path.isfile(os.path.join(directory_path, file))]
+    
+    return files_list
+
+
+def directory_exists(directory_path):
+    """
+    Check if a directory exists.
+
+    Parameters:
+    - directory_path (str): The path of the directory to check.
+
+    Returns:
+    - bool: True if the directory exists, False otherwise.
+    """
+    return os.path.exists(directory_path) and os.path.isdir(directory_path)
+
+
+
+
+def poll_process(pid):
+    try:
+        process = psutil.Process(pid)
+        while process.is_running():
+            # Do something while the process is running
+            return "Process is still running."
+        return process.returncode
+    except psutil.NoSuchProcess:
+        return f"No process found with PID: {pid}"
+
+
+def check_container_status(container_name):
+    try:
+        # Run the "docker inspect" command to get information about the container
+        result = subprocess.run(
+            ["docker", "inspect", "-f", "{{.State.Status}}", container_name],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+
+        # Extract the container status from the output
+        container_status = result.stdout.strip()
+
+        # Check if the container has exited
+        if container_status == "exited":
+            return True
+        else:
+            return False
+
+    except subprocess.CalledProcessError as e:
+        # Handle the error (e.g., container not found)
+        print(f"Error: {e}")
+        return None
+    
+    
+# def check_container_status_and_exit_code(container_name):
+#     try:
+#         # Run the "docker ps -a" command to list all containers, including those that have exited
+#         result = subprocess.run(['docker', 'ps', '-a', '--filter', f'name={container_name}', '--format', '{{.Status}} {{.ExitCode}}'], capture_output=True, text=True, check=True)
+
+#         # Extract the container status and exit code from the output
+#         output_lines = result.stdout.strip().split()
+
+#         if len(output_lines) == 2:
+#             container_status, exit_code = output_lines
+#             return container_status, int(exit_code)
+#         else:
+#             return None, None
+
+
+#     except subprocess.CalledProcessError as e:
+#         # Print the error message and return None for both status and exit code
+#         print(f"Error: {e}")
+#         return None, None

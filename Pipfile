@@ -8,6 +8,10 @@ django = "*"
 djangorestframework = "*"
 pyyaml = "*"
 black = "*"
+psutil = "*"
+pillow = "*"
+docker = "*"
+colorama = "*"
 
 [dev-packages]
 
