@@ -12,6 +12,7 @@ psutil = "*"
 pillow = "*"
 docker = "*"
 colorama = "*"
+drf-spectacular = "*"
 
 [dev-packages]
 

@@ -15,10 +15,16 @@ from rest_framework.views import APIView
 
 from .build_cypress import generate_cypress_test
 from .serializers.execute import ExecuteSerializers
-from .utils import (check_container_status, convert_to_unix_path,
-                    create_directory, directory_exists, get_full_path,
-                    list_files_in_directory)
+from .utils import (
+    check_container_status,
+    convert_to_unix_path,
+    create_directory,
+    directory_exists,
+    get_full_path,
+    list_files_in_directory,
+)
 from .docker.containers import start_test_inside_conatiner
+
 
 class VideosAPIView(APIView):
     def get(self, request, *args, **kwargs):
@@ -30,11 +36,13 @@ class VideosAPIView(APIView):
         # Set appropriate content type for video streaming
         content_type, encoding = mimetypes.guess_type(video_path)
         response = HttpResponse(content_type=content_type)
-        response['Content-Disposition'] = f'inline; filename="{os.path.basename(video_path)}"'
+        response["Content-Disposition"] = (
+            f'inline; filename="{os.path.basename(video_path)}"'
+        )
 
         # Stream the video content
-        with open(video_path, 'rb') as video_file:
-            for chunk in iter(lambda: video_file.read(chunk_size), b''):
+        with open(video_path, "rb") as video_file:
+            for chunk in iter(lambda: video_file.read(chunk_size), b""):
                 response.write(chunk)
 
         return response
@@ -42,21 +50,24 @@ class VideosAPIView(APIView):
             {"message": "Data processed successfully"},
             status=status.HTTP_201_CREATED,
         )
+
+
 class ScreenshotsAPIView(APIView):
     def get(self, request, *args, **kwargs):
-               # Open the image using PIL
+        # Open the image using PIL
         file_path = request.GET.get("path", None)
         pil_image = PILImage.open(file_path)
-        
+
         # Convert the PIL image to bytes
         image_bytes = BytesIO()
-        pil_image.save(image_bytes, format='PNG')
+        pil_image.save(image_bytes, format="PNG")
         image_data = image_bytes.getvalue()
 
         # Create the HTTP response with the image data
-        response = HttpResponse(image_data, content_type='image/png')
-        response['Content-Disposition'] = f'attachment; filename="{file_path}"'
+        response = HttpResponse(image_data, content_type="image/png")
+        response["Content-Disposition"] = f'attachment; filename="{file_path}"'
         return response
+
 
 class ExecuteAPIView(APIView):
     def get(self, request, *args, **kwargs):
@@ -77,20 +88,29 @@ class ExecuteAPIView(APIView):
         }
         if exited or exited is None:
             message = ""
-            if directory_exists(f"/automation-tests/{name}/e2e/cypress/screenshots/{name}.cy.js"):
+            if directory_exists(
+                f"/automation-tests/{name}/e2e/cypress/screenshots/{name}.cy.js"
+            ):
                 screenshots = list_files_in_directory(
-                     os.path.join("/automation-tests",name,"e2e","cypress","screenshots",f"{name}.cy.js")
+                    os.path.join(
+                        "/automation-tests",
+                        name,
+                        "e2e",
+                        "cypress",
+                        "screenshots",
+                        f"{name}.cy.js",
+                    )
                 )
                 result["screenshots"] = screenshots
 
             if directory_exists(f"/automation-tests/{name}/e2e/cypress/videos"):
                 videos = list_files_in_directory(
-                    os.path.join("/automation-tests",name,"e2e","cypress","videos")
+                    os.path.join("/automation-tests", name, "e2e", "cypress", "videos")
                 )
                 result["videos"] = videos
 
         return Response(
-            {"message": "Data processed successfully", "exited": exited,**result},
+            {"message": "Data processed successfully", "exited": exited, **result},
             status=status.HTTP_201_CREATED,
         )
 
@@ -111,6 +131,7 @@ class ExecuteAPIView(APIView):
 
             create_directory(f"/automation-tests/{name}/e2e/cypress/integration/")
             create_directory(f"/automation-tests/{name}/e2e/logs")
+
             with open(
                 f"/automation-tests/{name}/e2e/cypress/integration/{name}.cy.js", "w"
             ) as cypress_test_file:
@@ -127,7 +148,7 @@ class ExecuteAPIView(APIView):
             volume_path = convert_to_unix_path(volume_path)
             if settings.SHARED_PATH:
                 volume_path = f"{settings.SHARED_PATH}/{name}/e2e"
-            print(volume_path)
+
             docker_command = f"docker run -it --name {name} --workdir /e2e  -v {volume_path}:/e2e cypress/included:4.4.0"
             print(docker_command)
 
@@ -184,15 +205,17 @@ class ExecuteAPIView(APIView):
             #         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             #     )
 
-            
-            container = start_test_inside_conatiner(name,volume_path)
+            container = start_test_inside_conatiner(name, volume_path)
             return Response(
-                {"message": "Data processed successfully",
-                 "container":{
-                     "id":container.id,
-                     "status":container.status,
-                     "name":container.name,
-                     "labels":container.labels}},
+                {
+                    "message": "Data processed successfully",
+                    "container": {
+                        "id": container.id,
+                        "status": container.status,
+                        "name": container.name,
+                        "labels": container.labels,
+                    },
+                },
                 status=status.HTTP_201_CREATED,
             )
         else:
