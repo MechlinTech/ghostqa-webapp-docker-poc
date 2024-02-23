@@ -25,8 +25,8 @@ class TestContainersRuns(models.Model):
 
     
 class TestArtifacts(models.Model):
-    container_runs = models.ForeignKey(TestContainersRuns,on_delete=models.CASCADE)
-    suite = models.ForeignKey(TestSuite,on_delete=models.CASCADE)
+    container_runs = models.ForeignKey(TestContainersRuns,on_delete=models.CASCADE,related_name='runs_artifacts')
+    suite = models.ForeignKey(TestSuite,on_delete=models.CASCADE,related_name='suite_artifacts')
     type =models.CharField(max_length=255, null=True)
     files = models.FileField(upload_to='uploads/artifacts/')
     

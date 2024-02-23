@@ -136,3 +136,5 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     # other DRF settings...
 }
+
+MIDDLEWARE += ('crum.CurrentRequestUserMiddleware',)

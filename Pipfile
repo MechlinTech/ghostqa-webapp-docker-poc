@@ -13,6 +13,7 @@ pillow = "*"
 docker = "*"
 colorama = "*"
 drf-spectacular = "*"
+django-crum = "*"
 
 [dev-packages]
 

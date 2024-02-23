@@ -1,27 +1,31 @@
 import json
+from io import BytesIO
+import mimetypes
 
-import yaml
+import yaml,os
 from cypress.build_cypress import generate_cypress_test
-from cypress.docker.containers import start_test_inside_conatiner,get_container
+from cypress.docker.containers import (get_container,
+                                       start_test_inside_conatiner)
 from cypress.models import TestSuite
 from cypress.serializers.execute import (  # Assuming you have a serializer for TestSuite
-    ExecuteSerializers, TestSuiteSerializer,TestContainersRunsSerializer)
+    ExecuteSerializers, TestContainersRunsSerializer, TestSuiteSerializer)
 from cypress.utils import (check_container_status, convert_to_unix_path,
                            create_directory, directory_exists, get_full_path,
                            list_files_in_directory)
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404
 from drf_spectacular.openapi import AutoSchema
 from drf_spectacular.utils import extend_schema
-from rest_framework import viewsets
+from PIL import Image as PILImage
+from rest_framework import viewsets,mixins
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser
 
 from ..models import TestArtifacts, TestContainersRuns, TestSuite
 
 
-class TestSuiteViewSet(viewsets.ModelViewSet):
+class TestSuiteViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
     queryset = TestSuite.objects.all()
     serializer_class = TestSuiteSerializer
 
@@ -29,8 +33,7 @@ class TestSuiteViewSet(viewsets.ModelViewSet):
     def get_parser_classes(self):
         return [MultiPartParser]
     
-    def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
+    
     
     @extend_schema(methods=['post'], request=TestSuiteSerializer)
     @action(methods=['post'],detail=False)
@@ -80,8 +83,49 @@ class TestSuiteViewSet(viewsets.ModelViewSet):
         return JsonResponse({
            **self.get_serializer(instance).data
         })
+    
+    @action(methods=['get'],detail=True)
+    def get_file(self,request,*args, **kwargs):
+        view_name = request.resolver_match.url_name
+        artifacts = get_object_or_404(TestArtifacts,**kwargs)
         
+        if artifacts.type == "screenshot":
+            # Open the image using PIL
+            file_path = artifacts.files.path
+            pil_image = PILImage.open(file_path)
+
+            # Convert the PIL image to bytes
+            image_bytes = BytesIO()
+            pil_image.save(image_bytes, format="PNG")
+            image_data = image_bytes.getvalue()
+
+            # Create the HTTP response with the image data
+            response = HttpResponse(image_data, content_type="image/png")
+            response["Content-Disposition"] = f'attachment; filename="{file_path}"'
+            return response
+        if artifacts.type == "video":
+
+            # Open the video file
+            chunk_size = 8192  # Adjust the chunk size according to your needs
+
+            # Set appropriate content type for video streaming
+            content_type, encoding = mimetypes.guess_type(artifacts.files.path)
+            response = HttpResponse(content_type=content_type)
+            response["Content-Disposition"] = (
+                f'inline; filename="{os.path.basename(artifacts.files.path)}"'
+            )
+
+            # Stream the video content
+            with open(artifacts.files.path, "rb") as video_file:
+                for chunk in iter(lambda: video_file.read(chunk_size), b""):
+                    response.write(chunk)
+
+            return response
+        return JsonResponse({
+            "error":"error"
+        },status=400) 
         
+             
     @action(methods=['get'],detail=True)
     def monitor_container_run(self,request,*args, **kwargs):
         container_run = get_object_or_404(TestContainersRuns,**kwargs)

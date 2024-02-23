@@ -1,0 +1,15 @@
+- TestClockSessionApp:
+    beforeEach:
+      - type: visit
+        selector: https://www.saucedemo.com/v1/
+    actions:
+      - type: type
+        selector: input#user-name
+        text: standard_user
+        
+      - type: type
+        selector: input#password
+        text: secret_sauce
+      - type: click
+        selector: input#login-button
+        
