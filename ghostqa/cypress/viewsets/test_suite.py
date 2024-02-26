@@ -49,9 +49,18 @@ class TestSuiteViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
         container_run.container_name =  f"{instance.name}-{container_run.ref}"
         container_run.container_status =  f"pending"
         container_run.save()
-        
-        tests = yaml.safe_load(instance.scenarios_file)
-
+        try:
+            tests = yaml.safe_load(instance.scenarios_file)
+        except Exception as e:
+            try:
+                tests = json.load(instance.scenarios_file)
+            except Exception as json_exception:
+                return JsonResponse({
+                "Status":"Unable to parse JSON or yaml file",
+                "json":f"{json_exception}",
+                "yaml":f"{e}"
+                },status=400
+                                    )
         cypress_code = generate_cypress_test(tests)
         name = container_run.container_name
         
