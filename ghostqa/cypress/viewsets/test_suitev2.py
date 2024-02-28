@@ -83,7 +83,7 @@ class TestSuiteV2ViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
                 "json":f"{json_exception}",
                 "yaml":f"{e}"
                 },status=400
-        )
+                )
         
         cypress_code = generate_cypress_testv2(tests)
         name = container_run.container_name
@@ -96,7 +96,7 @@ class TestSuiteV2ViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
         print(f"{__name__}: volume_path: {volume_path}")
         
         create_directory(f"/automation-tests/{name}/cypress/")
-        copy_files_and_folders(CYPRESS_CONFIG_PATH,f"/automation-tests/{name}/cypress/")        
+        copy_files_and_folders(CYPRESS_CONFIG_PATH,f"/automation-tests/{name}/e2e/cypress/e2e")        
         with open(
                 f"/automation-tests/{name}/cypress/e2e/cypress/e2e/{name}.cy.js", "w"
             ) as cypress_test_file:
@@ -117,6 +117,7 @@ class TestSuiteV2ViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
         if settings.SHARED_PATH:
                 volume_path = f"{settings.SHARED_PATH}/{name}/cypress"
         
+        print("STARTING CONTAINER")
         start_test_inside_conatinerV2(container_run.container_name,volume_path,container_run)
 
         container_run_serilzer = TestContainersRunsSerializer(container_run)
