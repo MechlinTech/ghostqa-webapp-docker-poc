@@ -25,7 +25,19 @@ class TestContainersRunsSerializer(serializers.ModelSerializer):
     runs_artifacts = TestArtifactsSerializer(many=True)
     class Meta:
         model = TestContainersRuns
-        fields = '__all__'
+        fields = [
+            'id',
+            'container_id',
+            'container_status',
+            'container_labels',
+            'container_name',
+            'container_short_id',
+            'ref',
+            'runs_artifacts',
+            'json',
+            'suite',
+            'container_logs_str',
+            ]
         
 class TestSuiteSerializer(serializers.ModelSerializer):
     scenarios_file = serializers.FileField()  # You may want to specify a custom upload_to path
