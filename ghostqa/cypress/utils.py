@@ -178,7 +178,21 @@ def copy_files_and_folders(source_dir, destination_dir):
             source_path = os.path.join(root, file_name)
             destination_path = os.path.join(destination_dir, os.path.relpath(source_path, source_dir))
             shutil.copy2(source_path, destination_path)    
-    
+
+import jsbeautifier
+
+def format_javascript(input_code):
+    try:
+        # Use jsbeautifier to format the code
+        formatted_code = jsbeautifier.beautify(input_code)
+
+        # Return the formatted code
+        return formatted_code
+
+    except Exception as e:
+        # Handle errors, if any
+        print(f"Error while formatting JavaScript code: {e}")
+        return input_code
 # def check_container_status_and_exit_code(container_name):
 #     try:
 #         # Run the "docker ps -a" command to list all containers, including those that have exited

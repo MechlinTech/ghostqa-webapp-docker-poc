@@ -9,7 +9,7 @@ from cypress.docker.containers import (get_container,
 from cypress.models import TestSuite
 from cypress.serializers.execute import (  # Assuming you have a serializer for TestSuite
     ExecuteSerializers, TestContainersRunsSerializer, TestSuiteSerializer)
-from cypress.utils import (check_container_status, convert_to_unix_path,
+from cypress.utils import (format_javascript,check_container_status, convert_to_unix_path,
                            create_directory, directory_exists, get_full_path,copy_files_and_folders,
                            list_files_in_directory)
 from django.conf import settings
@@ -86,6 +86,9 @@ class TestSuiteV2ViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
                 )
         
         cypress_code = generate_cypress_testv2(tests)
+        cypress_code = format_javascript(cypress_code)
+        instance.cypress_code = cypress_code
+        instance.save()
         name = container_run.container_name
         BASE_DIR  = settings.BASE_DIR
         CYPRESS_CONFIG_PATH = os.path.abspath(os.path.join(BASE_DIR,"cypress","cypress"))

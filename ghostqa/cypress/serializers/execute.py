@@ -47,4 +47,4 @@ class TestSuiteSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = TestSuite
-        fields = ["id", "client_reference_id", "scenarios_file", "name","container_runs"]
+        fields = ["id", "client_reference_id", "scenarios_file", "name","container_runs","cypress_code"]

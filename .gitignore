@@ -1,0 +1,44 @@
+ghostqa/media/
+**.pyc
+
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# C extensions
+*.so
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+*.env/
+
+# Logs and databases
+*.log
+*.sqlite
+*.db
+
+# Output of coverage tools
+.coverage
+htmlcov/
+
+# IDE-specific files
+.vscode/
+*.pyc
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+
+
+__pycache__/
