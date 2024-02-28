@@ -93,11 +93,13 @@ class TestSuiteV2ViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
         volume_path = f"/automation-tests/{name}/cypress"
         volume_path = get_full_path(volume_path)
         volume_path = convert_to_unix_path(volume_path)
+        if settings.SHARED_PATH:
+                volume_path = f"{settings.SHARED_PATH}/{name}/cypress"
         print(f"{__name__}: volume_path: {volume_path}")
         
-        create_directory(f"/automation-tests/{name}/cypress/")
-        copy_files_and_folders(CYPRESS_CONFIG_PATH,f"/automation-tests/{name}/cypress/")       
-        create_directory(f"/automation-tests/{name}/cypress/e2e/cypress/e2e")
+        create_directory(f"{volume_path}")
+        copy_files_and_folders(CYPRESS_CONFIG_PATH,volume_path)       
+        create_directory(f"{volume_path}/e2e/cypress/e2e/")
          
         with open(
                 f"/automation-tests/{name}/cypress/e2e/cypress/e2e/{name}.cy.js", "w"
@@ -116,8 +118,7 @@ class TestSuiteV2ViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
         #             destination_config.write(source_config.read())
                                     
         
-        if settings.SHARED_PATH:
-                volume_path = f"{settings.SHARED_PATH}/{name}/cypress"
+       
         
         print("STARTING CONTAINER")
         start_test_inside_conatinerV2(container_run.container_name,volume_path,container_run)
