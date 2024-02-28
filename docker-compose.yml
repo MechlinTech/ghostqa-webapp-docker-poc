@@ -11,10 +11,10 @@ services:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
     environment:
-      - SHARED_PATH=d:/automation-tests
+      - SHARED_PATH=/automation-tests
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - d:/automation-tests:/automation-tests
+      - /automation-tests:/automation-tests
     ports:
       - "8010:8000"
     depends_on:

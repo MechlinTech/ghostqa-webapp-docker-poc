@@ -18,10 +18,12 @@ from django.contrib import admin
 from django.urls import path,include
 from rest_framework.routers import DefaultRouter
 from cypress.viewsets.test_suite import TestSuiteViewSet,TestContainersRunsViewset
+from cypress.viewsets.test_suitev2 import TestSuiteV2ViewSet
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 router = DefaultRouter()
-router.register(r'testsuites', TestSuiteViewSet)
+# router.register(r'testsuites', TestSuiteViewSet)
+router.register(r'test-suitesV2', TestSuiteV2ViewSet)
 # router.register(r'container-runs', TestContainersRunsViewset)
 
 
