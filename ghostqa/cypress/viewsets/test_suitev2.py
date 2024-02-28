@@ -96,7 +96,9 @@ class TestSuiteV2ViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
         print(f"{__name__}: volume_path: {volume_path}")
         
         create_directory(f"/automation-tests/{name}/cypress/")
-        copy_files_and_folders(CYPRESS_CONFIG_PATH,f"/automation-tests/{name}/e2e/cypress/e2e")        
+        copy_files_and_folders(CYPRESS_CONFIG_PATH,f"/automation-tests/{name}/cypress/")       
+        create_directory(f"/automation-tests/{name}/cypress/e2e/cypress/e2e")
+         
         with open(
                 f"/automation-tests/{name}/cypress/e2e/cypress/e2e/{name}.cy.js", "w"
             ) as cypress_test_file:
