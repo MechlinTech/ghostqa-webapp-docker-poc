@@ -1,0 +1,12 @@
+version: "3.2"
+services:
+  cypress:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /e2e
+    volumes:
+      - ./e2e/cypress:/e2e/cypress
+      - ./e2e/cypress.config.js:/e2e/cypress.config.js
+    command: cypress run --reporter mochawesome --reporter-options reportDir="cypress/results",overwrite=true,html=true,json=true
+    

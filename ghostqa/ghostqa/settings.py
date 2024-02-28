@@ -128,7 +128,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SHARED_PATH = os.environ.get('SHARED_PATH', None)
 
-# Media settings
+SAMPLES_PATH = os.path.join(BASE_DIR, 'cypress',"samples")
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / "media" 
 

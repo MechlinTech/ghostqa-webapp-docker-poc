@@ -1,0 +1,112 @@
+[
+    {
+        "TestSuite1": {
+            "name": "Test Suite 1 - Login Tests",
+            "beforeEach": [
+                {
+                    "type": "visit",
+                    "selector": "https://www.saucedemo.com/v1/"
+                }
+            ],
+            "testCases": [
+                {
+                    "TestCase1": {
+                        "name": "Test Case 1 - Login with Standard User",
+                        "actions": [
+                            {
+                                "type": "type",
+                                "selector": "input#user-name",
+                                "text": "standard_user"
+                            },
+                            {
+                                "type": "type",
+                                "selector": "input#password",
+                                "text": "secret_sauce"
+                            },
+                            {
+                                "type": "click",
+                                "selector": "input#login-button"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "TestCase2": {
+                        "name": "Test Case 2 - Login with Another User",
+                        "actions": [
+                            {
+                                "type": "type",
+                                "selector": "input#user-name",
+                                "text": "another_user"
+                            },
+                            {
+                                "type": "type",
+                                "selector": "input#password",
+                                "text": "another_secret_sauce"
+                            },
+                            {
+                                "type": "click",
+                                "selector": "input#login-button"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "TestSuite1": {
+            "name": "Test Suite 2 - Test @",
+            "beforeEach": [
+                {
+                    "type": "visit",
+                    "selector": "https://www.saucedemo.com/v1/"
+                }
+            ],
+            "testCases": [
+                {
+                    "TestCase1": {
+                        "name": "Test Case 1 - Login with Standard User",
+                        "actions": [
+                            {
+                                "type": "type",
+                                "selector": "input#user-name",
+                                "text": "standard_user"
+                            },
+                            {
+                                "type": "type",
+                                "selector": "input#password",
+                                "text": "secret_sauce"
+                            },
+                            {
+                                "type": "click",
+                                "selector": "input#login-button"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "TestCase2": {
+                        "name": "Test Case 2 - Login with Another User",
+                        "actions": [
+                            {
+                                "type": "type",
+                                "selector": "input#user-name",
+                                "text": "another_user"
+                            },
+                            {
+                                "type": "type",
+                                "selector": "input#password",
+                                "text": "another_secret_sauce"
+                            },
+                            {
+                                "type": "click",
+                                "selector": "input#login-button"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+]

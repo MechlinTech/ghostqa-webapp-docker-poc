@@ -147,7 +147,37 @@ def check_container_status(container_name):
         # Handle the error (e.g., container not found)
         print(f"Error: {e}")
         return None
-    
+
+import os
+import shutil
+
+def copy_files_and_folders(source_dir, destination_dir):
+    """
+    Copy all files and folders from the source directory to the destination directory.
+
+    Parameters:
+    - source_dir (str): The path to the source directory.
+    - destination_dir (str): The path to the destination directory.
+    """
+
+    # Create the destination directory if it doesn't exist
+    if not os.path.exists(destination_dir):
+        os.makedirs(destination_dir)
+
+    # Walk through the source directory and copy files and folders
+    for root, dirs, files in os.walk(source_dir):
+        # Create the corresponding directories in the destination
+        for dir_name in dirs:
+            source_path = os.path.join(root, dir_name)
+            destination_path = os.path.join(destination_dir, os.path.relpath(source_path, source_dir))
+            if not os.path.exists(destination_path):
+                os.makedirs(destination_path)
+
+        # Copy files to the destination
+        for file_name in files:
+            source_path = os.path.join(root, file_name)
+            destination_path = os.path.join(destination_dir, os.path.relpath(source_path, source_dir))
+            shutil.copy2(source_path, destination_path)    
     
 # def check_container_status_and_exit_code(container_name):
 #     try:

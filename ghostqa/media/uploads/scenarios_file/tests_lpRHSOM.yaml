@@ -1,0 +1,150 @@
+- monuTest:
+    beforeEach:
+      - type: visit
+        selector: https://google.com
+    actions:
+      - type: type
+        selector: [data-test=new-todo]
+        text: 'Feed the cat'
+
+
+- todoAppTests:
+    url: https://example.cypress.io/todo
+    beforeEach:
+      - type: visit
+        selector: https://example.cypress.io/todo
+    actions:
+      - type: visit
+        selector: https://google.com
+      - type: assert
+        assertType: contain
+        selector: .todo-list li
+        value: 'Pay electric bill'
+
+      - type: assert
+        assertType: contain
+        selector: .todo-list li
+        value: 'Walk the dog'
+
+      - type: type
+        selector: [data-test=new-todo]
+        text: 'Feed the cat'
+
+      - type: press
+        key: Enter
+
+      - type: assert
+        assertType: contain
+        selector: .todo-list li
+        value: 'Feed the cat'
+
+      - type: check
+        selector: .todo-list li:nth-child(1) input[type=checkbox]
+
+      - type: assert
+        assertType: have.class
+        selector: .todo-list li:nth-child(1)
+        value: 'completed'
+
+      - type: click
+        selector: :contains('Active')
+
+      - type: assert
+        assertType: contain
+        selector: .todo-list li
+        value: 'Walk the dog'
+
+      - type: assert
+        assertType: not.exist
+        selector: :contains('Pay electric bill')
+
+      - type: click
+        selector: :contains('Completed')
+
+      - type: assert
+        assertType: contain
+        selector: .todo-list li
+        value: 'Pay electric bill'
+
+      - type: assert
+        assertType: not.exist
+        selector: :contains('Walk the dog')
+
+      - type: click
+        selector: :contains('Clear completed')
+
+      - type: assert
+        assertType: have.length
+        selector: .todo-list li
+        value: 1
+
+      - type: assert
+        assertType: not.have.text
+        selector: .todo-list li
+        value: 'Pay electric bill'
+
+      - type: assert
+        assertType: not.exist
+        selector: :contains('Clear completed')
+
+
+- googleSearch:
+    url: https://www.google.com
+    actions:
+      - type: type
+        selector: input[name='q']
+        text: "Cypress E2E testing"
+      - type: press
+        key: Enter
+      - type: wait
+        duration: 2000
+      - type: assert
+        assertType: contain
+        selector: #search
+        value: "Cypress E2E testing"
+
+- test1:
+    url: /path/to/test1
+    actions:
+      - type: visit
+        selector: /path/to/test1
+      - type: click
+        selector: button#login-btn
+      - type: type
+        selector: input#username
+        text: testuser
+      - type: type
+        selector: input#password
+        text: testpassword
+      - type: press
+        key: Enter
+      - type: wait
+        duration: 2000
+      - type: scroll
+        direction: down
+        distance: 300
+      - type: hover
+        selector: a#hover-element
+      - type: assert
+        assertType: exist
+        selector: div#success-message
+- test2:
+    url: /path/to/test2
+    actions:
+      - type: visit
+        selector: /path/to/test2
+      - type: click
+        selector: button#load-data-btn
+      - type: wait
+        duration: 1000
+      - type: select
+        selector: select#data-dropdown
+        option: Option 1
+      - type: check
+        selector: input#agree-checkbox
+      - type: uncheck
+        selector: input#disagree-checkbox
+      - type: assert
+        assertType: contain
+        selector: div#result
+        value: 'Data loaded successfully'

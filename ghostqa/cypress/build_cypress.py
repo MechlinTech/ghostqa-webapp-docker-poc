@@ -10,6 +10,53 @@ def format_js_code(js_code):
     except Exception as e:
         print(f"Error formatting JavaScript code: {e}")
         return js_code
+def generate_test_case_code(test_case):
+    test_case_name = list(test_case.keys())[0]
+    test_case_details = test_case[test_case_name]
+    case_name = test_case_details.get('name', "Unnamed Test Case")
+    before_each = test_case_details.get('beforeEach', [])
+    actions = test_case_details.get('actions', [])
+
+    # return f"""
+    #     describe('{case_name}', () => {{
+    #         {generate_before_each(before_each)}
+            
+    #         it('should execute test steps', () => {{
+    #             {generate_test_actions(actions)}
+    #         }});
+    #     }});
+    # """
+    return f"""
+            it('{case_name}', () => {{
+                {generate_test_actions(actions)}
+            }});
+    """
+def generate_test_cases(test_cases):
+    # Generate Cypress test code for each test case
+    return '\n'.join([generate_test_case_code(test_case) for test_case in test_cases])
+def generate_cypress_testv2(test_suites):
+    try:
+
+
+            # Generate Cypress test code
+            cypress_code = []
+            for test_suite in test_suites:
+                suite_name = list(test_suite.keys())[0]
+                suite_details = test_suite[suite_name]
+                suite_name = suite_details.get('name', "Unnamed Suite")
+                test_cases = suite_details.get('testCases', [])
+                before_each = suite_details.get('beforeEach', [])
+                # Cypress test code template
+                cypress_code.append(f"""
+                    describe('{suite_name}', () => {{
+                        {generate_before_each(before_each)}
+                        {generate_test_cases(test_cases)}
+                    }});
+                """)
+
+            return '\n'.join(cypress_code)    
+    except Exception as e:
+        print(f'Error generating Cypress tests: {e}')
 def generate_cypress_test(tests):
     try:
 
@@ -36,22 +83,7 @@ def generate_cypress_test(tests):
                     }});
                 """)
 
-            return '\n'.join(cypress_code)
-            # # Save generated code to a file
-            # output_file_path = 'cypress/e2e/3-test/generatedTests.cy.js'
-            # with open(output_file_path, 'w') as output_file:
-            #     output_file.write('\n'.join(cypress_code))
-
-            # print(f'Cypress tests generated successfully. Check {output_file_path}')
-    
-            # # Save generated code to a file
-            # output_file_path = 'isolated/e2e/cypress/integration/generatedTests.cy.js'
-            # with open(output_file_path, 'w') as output_file:
-            #     output_file.write('\n'.join(cypress_code))
-
-            # print(f'Cypress tests generated successfully. Check {output_file_path}')
-
-    
+            return '\n'.join(cypress_code)    
     except Exception as e:
         print(f'Error generating Cypress tests: {e}')
 

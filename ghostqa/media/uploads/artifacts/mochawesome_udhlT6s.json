@@ -1,0 +1,281 @@
+{
+  "stats": {
+    "suites": 5,
+    "tests": 5,
+    "passes": 0,
+    "pending": 0,
+    "failures": 5,
+    "start": "2024-02-28T20:53:03.281Z",
+    "end": "2024-02-28T20:53:21.866Z",
+    "duration": 18585,
+    "testsRegistered": 5,
+    "passPercent": 0,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "e0789e24-6513-4d92-bdab-70cf3b7727e9",
+      "title": "",
+      "fullFile": "cypress/e2e/demo-8a803c6d-ae61-4ff3-b56b-55e7bb766f1c.cy.js",
+      "file": "cypress/demo-8a803c6d-ae61-4ff3-b56b-55e7bb766f1c.cy.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "a3585cc0-4725-4330-a5c1-9b68cc4d4b4b",
+          "title": "monuTest",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "should execute test steps",
+              "fullTitle": "monuTest should execute test steps",
+              "timedOut": null,
+              "duration": 2761,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "cy.get(\"['data-test=new-todo']\").type('Feed the cat');",
+              "err": {
+                "message": "Error: Syntax error, unrecognized expression: ['data-test=new-todo']",
+                "estack": "Error: Syntax error, unrecognized expression: ['data-test=new-todo']\n    at Sizzle.error (https://www.google.com/__cypress/runner/cypress_runner.js:8470:8)\n    at Sizzle.tokenize (https://www.google.com/__cypress/runner/cypress_runner.js:9122:11)\n    at Sizzle.select (https://www.google.com/__cypress/runner/cypress_runner.js:9549:20)\n    at Function.Sizzle [as find] (https://www.google.com/__cypress/runner/cypress_runner.js:7774:9)\n    at jQuery.fn.init.find (https://www.google.com/__cypress/runner/cypress_runner.js:9805:11)\n    at new jQuery.fn.init (https://www.google.com/__cypress/runner/cypress_runner.js:9920:40)\n    at Object.query (https://www.google.com/__cypress/runner/cypress_runner.js:34703:10)\n    at $Cy.$$ (https://www.google.com/__cypress/runner/cypress_runner.js:140248:57)\n    at <unknown> (https://www.google.com/__cypress/runner/cypress_runner.js:132137:18)\n    at Object.subjectFn (https://www.google.com/__cypress/runner/cypress_runner.js:144040:16)\n    at $Cy.verifyUpcomingAssertions (https://www.google.com/__cypress/runner/cypress_runner.js:143384:31)\n    at onRetry (https://www.google.com/__cypress/runner/cypress_runner.js:144031:15)\n    at retryQuery (https://www.google.com/__cypress/runner/cypress_runner.js:144044:10)\n    at <unknown> (https://www.google.com/__cypress/runner/cypress_runner.js:144194:17)\n    at tryCatcher (https://www.google.com/__cypress/runner/cypress_runner.js:1807:23)\n    at Promise._settlePromiseFromHandler (https://www.google.com/__cypress/runner/cypress_runner.js:1519:31)\n    at Promise._settlePromise (https://www.google.com/__cypress/runner/cypress_runner.js:1576:18)\n    at Promise._settlePromiseCtx (https://www.google.com/__cypress/runner/cypress_runner.js:1613:10)\n    at _drainQueueStep (https://www.google.com/__cypress/runner/cypress_runner.js:2411:12)\n    at _drainQueue (https://www.google.com/__cypress/runner/cypress_runner.js:2400:9)\n    at Async._drainQueues (https://www.google.com/__cypress/runner/cypress_runner.js:2416:5)\n    at Async.drainQueues (https://www.google.com/__cypress/runner/cypress_runner.js:2286:14)",
+                "diff": null
+              },
+              "uuid": "34cd945f-c812-496b-a503-722f90e1c38e",
+              "parentUUID": "a3585cc0-4725-4330-a5c1-9b68cc4d4b4b",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [],
+          "failures": [
+            "34cd945f-c812-496b-a503-722f90e1c38e"
+          ],
+          "pending": [],
+          "skipped": [],
+          "duration": 2761,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        },
+        {
+          "uuid": "94511930-eae1-435a-ba4f-be7d88079d19",
+          "title": "todoAppTests",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "should execute test steps",
+              "fullTitle": "todoAppTests should execute test steps",
+              "timedOut": null,
+              "duration": 2991,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "cy.visit('https://example.cypress.io/todo');\ncy.visit(\"https://google.com\");\ncy.get(\".todo-list li\").should('include.text', 'Pay electric bill');\ncy.get(\".todo-list li\").should('include.text', 'Walk the dog');\ncy.get(\"['data-test=new-todo']\").type('Feed the cat');\ncy.get('body').type('Enter');\ncy.get(\".todo-list li\").should('include.text', 'Feed the cat');\ncy.get(\".todo-list li:nth-child(1) input[type=checkbox]\").check();\ncy.get(\".todo-list li:nth-child(1)\").should('have.class', 'completed');\ncy.get(\":contains('Active')\").click();\ncy.get(\".todo-list li\").should('include.text', 'Walk the dog');\ncy.get(\":contains('Pay electric bill')\").should('not.exist');\ncy.get(\":contains('Completed')\").click();\ncy.get(\".todo-list li\").should('include.text', 'Pay electric bill');\ncy.get(\":contains('Walk the dog')\").should('not.exist');\ncy.get(\":contains('Clear completed')\").click();\ncy.get(\".todo-list li\").should('have.length', 1);\ncy.get(\":contains('Clear completed')\").should('not.exist');",
+              "err": {
+                "message": "Error: The following error originated from your application code, not from Cypress.\n\n  > Blocked a frame with origin \"https://www.google.com\" from accessing a cross-origin frame.\n\nThis error was thrown by a cross origin page. If you wish to suppress this error you will have to use the cy.origin command to handle the error prior to visiting the page.\n\n`cy.origin('https://www.google.com', () => {`\n`  cy.on('uncaught:exception', (e) => {`\n`    if (e.message.includes('Things went bad')) {`\n`      // we expected this error, so let's ignore it`\n`      // and let the test continue`\n`      return false`\n`    }`\n`  })`\n`})`\n`cy.visit('https://www.google.com/')`\n\nWhen Cypress detects uncaught errors originating from your application it will automatically fail the current test.\n\nThis behavior is configurable, and you can choose to turn this off by listening to the `uncaught:exception` event.\n\nhttps://on.cypress.io/uncaught-exception-from-application\n\nhttps://on.cypress.io/origin",
+                "estack": "Error: The following error originated from your application code, not from Cypress.\n\n  > Blocked a frame with origin \"https://www.google.com\" from accessing a cross-origin frame.\n\nThis error was thrown by a cross origin page. If you wish to suppress this error you will have to use the cy.origin command to handle the error prior to visiting the page.\n\n`cy.origin('https://www.google.com', () => {`\n`  cy.on('uncaught:exception', (e) => {`\n`    if (e.message.includes('Things went bad')) {`\n`      // we expected this error, so let's ignore it`\n`      // and let the test continue`\n`      return false`\n`    }`\n`  })`\n`})`\n`cy.visit('https://www.google.com/')`\n\nWhen Cypress detects uncaught errors originating from your application it will automatically fail the current test.\n\nThis behavior is configurable, and you can choose to turn this off by listening to the `uncaught:exception` event.\n\nhttps://on.cypress.io/uncaught-exception-from-application\n\nhttps://on.cypress.io/origin\n    at cypressErr (https://example.cypress.io/__cypress/runner/cypress_runner.js:75257:18)\n    at Object.errByPath (https://example.cypress.io/__cypress/runner/cypress_runner.js:75312:10)\n    at PrimaryOriginCommunicator.<anonymous> (https://example.cypress.io/__cypress/runner/cypress_runner.js:169612:72)\n    at PrimaryOriginCommunicator.emit (https://example.cypress.io/__cypress/runner/cypress_runner.js:146411:5)\n    at PrimaryOriginCommunicator.onMessage (https://example.cypress.io/__cypress/runner/cypress_runner.js:168932:12)\n    at crossOriginOnMessageRef (https://example.cypress.io/__/assets/index-ec1c3da3.js:146348:72)",
+                "diff": null
+              },
+              "uuid": "22d2be98-f610-47ef-85ba-f8470c873da7",
+              "parentUUID": "94511930-eae1-435a-ba4f-be7d88079d19",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [],
+          "failures": [
+            "22d2be98-f610-47ef-85ba-f8470c873da7"
+          ],
+          "pending": [],
+          "skipped": [],
+          "duration": 2991,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        },
+        {
+          "uuid": "30503d05-8812-49a2-9f94-5aa164c3e6e7",
+          "title": "googleSearch",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "should execute test steps",
+              "fullTitle": "googleSearch should execute test steps",
+              "timedOut": null,
+              "duration": 5407,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "cy.visit('https://www.google.com');\ncy.get(\"input[name='q']\").type('Cypress E2E testing');\ncy.get('body').type('Enter');\ncy.wait(2000);\ncy.get(\"None\").should('include.text', 'Cypress E2E testing');",
+              "err": {
+                "message": "AssertionError: Timed out retrying after 4000ms: Expected to find element: `input[name='q']`, but never found it.",
+                "estack": "AssertionError: Timed out retrying after 4000ms: Expected to find element: `input[name='q']`, but never found it.\n    at Context.eval (webpack:///./cypress/e2e/demo-8a803c6d-ae61-4ff3-b56b-55e7bb766f1c.cy.js:55:31)",
+                "diff": null
+              },
+              "uuid": "4a15b961-fa7e-4b2d-9158-b34cbad82d36",
+              "parentUUID": "30503d05-8812-49a2-9f94-5aa164c3e6e7",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [],
+          "failures": [
+            "4a15b961-fa7e-4b2d-9158-b34cbad82d36"
+          ],
+          "pending": [],
+          "skipped": [],
+          "duration": 5407,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        },
+        {
+          "uuid": "10a4baf3-5694-4f2d-8414-ff193e211f68",
+          "title": "test1",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "should execute test steps",
+              "fullTitle": "test1 should execute test steps",
+              "timedOut": null,
+              "duration": 260,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "cy.visit('/path/to/test1');\ncy.visit(\"/path/to/test1\");\ncy.get(\"button#login-btn\").click();\ncy.get(\"input#username\").type('testuser');\ncy.get(\"input#password\").type('testpassword');\ncy.get('body').type('Enter');\ncy.wait(2000);\ncy.get('body').scrollDown(300);\ncy.get(\"a#hover-element\").trigger('mouseover');\ncy.get(\"div#success-message\").should('exist');",
+              "err": {
+                "message": "TypeError: cy.get(...).scrollDown is not a function",
+                "estack": "TypeError: cy.get(...).scrollDown is not a function\n    at Context.eval (webpack:///./cypress/e2e/demo-8a803c6d-ae61-4ff3-b56b-55e7bb766f1c.cy.js:75:15)",
+                "diff": null
+              },
+              "uuid": "20d9cf11-c5ba-4e7f-a6e3-6920d0f5eae4",
+              "parentUUID": "10a4baf3-5694-4f2d-8414-ff193e211f68",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [],
+          "failures": [
+            "20d9cf11-c5ba-4e7f-a6e3-6920d0f5eae4"
+          ],
+          "pending": [],
+          "skipped": [],
+          "duration": 260,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        },
+        {
+          "uuid": "ec41ef57-b90e-423b-80c4-96b510a74451",
+          "title": "test2",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "should execute test steps",
+              "fullTitle": "test2 should execute test steps",
+              "timedOut": null,
+              "duration": 216,
+              "state": "failed",
+              "speed": null,
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "context": null,
+              "code": "cy.visit('/path/to/test2');\ncy.visit(\"/path/to/test2\");\ncy.get(\"button#load-data-btn\").click();\ncy.wait(1000);\ncy.get(\"select#data-dropdown\").select('Option 1');\ncy.get(\"input#agree-checkbox\").check();\ncy.get(\"input#disagree-checkbox\").uncheck();\ncy.get(\"div#result\").should('include.text', 'Data loaded successfully');",
+              "err": {
+                "message": "CypressError: `cy.visit()` failed trying to load:\n\n/path/to/test2\n\nWe failed looking for this file at the path:\n\n/e2e/path/to/test2\n\nThe internal Cypress web server responded with:\n\n  > 404: Not Found",
+                "estack": "CypressError: `cy.visit()` failed trying to load:\n\n/path/to/test2\n\nWe failed looking for this file at the path:\n\n/e2e/path/to/test2\n\nThe internal Cypress web server responded with:\n\n  > 404: Not Found\n    at <unknown> (https://www.google.com/__cypress/runner/cypress_runner.js:130958:76)\n    at visitFailedByErr (https://www.google.com/__cypress/runner/cypress_runner.js:130372:12)\n    at <unknown> (https://www.google.com/__cypress/runner/cypress_runner.js:130941:13)\n    at tryCatcher (https://www.google.com/__cypress/runner/cypress_runner.js:1807:23)\n    at Promise._settlePromiseFromHandler (https://www.google.com/__cypress/runner/cypress_runner.js:1519:31)\n    at Promise._settlePromise (https://www.google.com/__cypress/runner/cypress_runner.js:1576:18)\n    at Promise._settlePromise0 (https://www.google.com/__cypress/runner/cypress_runner.js:1621:10)\n    at Promise._settlePromises (https://www.google.com/__cypress/runner/cypress_runner.js:1697:18)\n    at _drainQueueStep (https://www.google.com/__cypress/runner/cypress_runner.js:2407:12)\n    at _drainQueue (https://www.google.com/__cypress/runner/cypress_runner.js:2400:9)\n    at Async._drainQueues (https://www.google.com/__cypress/runner/cypress_runner.js:2416:5)\n    at Async.drainQueues (https://www.google.com/__cypress/runner/cypress_runner.js:2286:14)\nFrom Your Spec Code:\n    at Context.eval (webpack:///./cypress/e2e/demo-8a803c6d-ae61-4ff3-b56b-55e7bb766f1c.cy.js:86:31)",
+                "diff": null
+              },
+              "uuid": "757776cb-0bfd-4f7e-a3f9-81a51734acc9",
+              "parentUUID": "ec41ef57-b90e-423b-80c4-96b510a74451",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [],
+          "failures": [
+            "757776cb-0bfd-4f7e-a3f9-81a51734acc9"
+          ],
+          "pending": [],
+          "skipped": [],
+          "duration": 216,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.0.1"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": false,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.3"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "cypress/results",
+        "overwrite": false,
+        "html": false,
+        "json": true
+      },
+      "version": "6.2.0"
+    }
+  }
+}
