@@ -21,9 +21,11 @@ from cypress.viewsets.test_suite import TestSuiteViewSet,TestContainersRunsViews
 from cypress.viewsets.test_suitev2 import TestSuiteV2ViewSet
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
+from performace_test.viewsets.performace_tests import PerformaceViewSet
 router = DefaultRouter()
 # router.register(r'testsuites', TestSuiteViewSet)
 router.register(r'test-suitesV2', TestSuiteV2ViewSet)
+router.register(r"performance-tests",PerformaceViewSet)
 # router.register(r'container-runs', TestContainersRunsViewset)
 
 

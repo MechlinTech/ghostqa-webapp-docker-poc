@@ -79,9 +79,9 @@ class TestSuiteV2ViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
                 tests = json.load(instance.scenarios_file)
             except Exception as json_exception:
                 return JsonResponse({
-                "Status":"Unable to parse JSON or yaml file",
-                "json":f"{json_exception}",
-                "yaml":f"{e}"
+                    "Status":"Unable to parse JSON or yaml file",
+                    "json":f"{json_exception}",
+                    "yaml":f"{e}"
                 },status=400
                 )
         
