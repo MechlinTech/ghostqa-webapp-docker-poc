@@ -14,8 +14,8 @@ from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
-from ..models import PerformaceTestSuite,TestContainersRuns
-from ..serializers.performace_tests import PerformaceTestSuiteSerializer
+from ..models import PerformaceTestSuite,TestContainersRuns,TestArtifacts
+from ..serializers.performace_tests import PerformaceTestSuiteSerializer,TestContainersRunsSerializer,TestArtifactsSerializer
 from cypress.utils import (format_javascript,check_container_status, convert_to_unix_path,
                            create_directory, directory_exists, get_full_path,copy_files_and_folders,
                            list_files_in_directory)
@@ -57,3 +57,60 @@ class PerformaceViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
             "status":   "success",
             "data":self.get_serializer(instance).data
         })
+        
+        
+    @action(methods=['get'],detail=True)
+    def get_file(self,request,*args, **kwargs):
+        view_name = request.resolver_match.url_name
+        print(view_name)
+        artifacts = get_object_or_404(TestArtifacts,**kwargs)
+        
+        if artifacts.type == "logs":
+            # Open the image using PIL
+            files = artifacts.files
+
+            # Convert the PIL image to bytes
+
+            # Create the HTTP response with the image data
+            response = HttpResponse(files.read())
+            response["Content-Disposition"] = f'attachment; filename="{files.name}"'
+            return response
+        
+        if artifacts.type == 'statistics':
+            # Open the image using PIL
+            file_data = artifacts.files.read().decode('utf-8')
+            
+            data = json.loads(file_data)
+            return Response(data)
+        if artifacts.type == "video":
+
+            # Open the video file
+            chunk_size = 8192  # Adjust the chunk size according to your needs
+
+            # Set appropriate content type for video streaming
+            content_type, encoding = mimetypes.guess_type(artifacts.files.path)
+            response = HttpResponse(content_type=content_type)
+            response["Content-Disposition"] = (
+                f'inline; filename="{os.path.basename(artifacts.files.path)}"'
+            )
+
+            # Stream the video content
+            with open(artifacts.files.path, "rb") as video_file:
+                for chunk in iter(lambda: video_file.read(chunk_size), b""):
+                    response.write(chunk)
+
+            return response
+        return JsonResponse({
+            "error":"error"
+        },status=400) 
+        
+             
+    @action(methods=['get'],detail=True)
+    def monitor_container_run(self,request,*args, **kwargs):
+        container_run = get_object_or_404(TestContainersRuns,**kwargs)
+        
+        
+        return Response({
+            **TestContainersRunsSerializer(container_run).data
+        })
+        

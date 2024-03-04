@@ -1,5 +1,5 @@
 from .client import get_client
-from cypress.models import TestContainersRuns,TestArtifacts
+from ..models import TestContainersRuns,TestArtifacts
 import threading
 import os,json
 from cypress.utils import list_files_in_directory,directory_exists
@@ -21,81 +21,56 @@ def monitor_docker_conatinerv2(container,container_id,volume_path):
         try:
             container_run = TestContainersRuns.objects.get(id=container_id)
             # container =  get_container(container_run.container_name)
-            container = container.wait()
-            print(container.status )
-            if container:
+            container_data = container.wait()
+            if container_data['Error'] == None:
                 container_run.container_id = container.id
                 container_run.container_status = container.status
                 container_run.container_labels = ""
                 container_run.container_short_id = container.short_id
                 container_run.save()
                 container
-                if container.status == "exited":
+                if container_data['StatusCode'] == 0 :
                     container_run.container_logs_str = container.logs()
                     container_run.save()
                     
                     result ={
-                        "screenshots":[],
-                        "videos":[],
-                        "results":[],
+                        "logs":[],
+                        "statistics":[],
+                        "html_zip":[],
                     }
-                    screenshots_path = f"{volume_path}/e2e/cypress/screenshots/{container_run.container_name}.cy.js"
-                    videos_path = f"{volume_path}/e2e/cypress/videos"
-                    results_path = f"{volume_path}/e2e/cypress/results"
+                    logs_path = f"{volume_path}/log.jtl"
+                    statistics_path = f"{volume_path}/html-results/statistics.json"
+                    html_path = f"{volume_path}/html-results"
                     
-                    if directory_exists(screenshots_path):
-                        screenshots = list_files_in_directory(screenshots_path)
-                        result["screenshots"] = screenshots
+                    test_artifact_instance = TestArtifacts.objects.create(
+                        container_runs=container_run,
+                        suite=container_run.suite,
+                        type='logs',  # Replace with the actual type
+                    )
+                    with open(logs_path, 'rb') as file:
+                        test_artifact_instance.files.save(os.path.basename(file.name), File(file))
+                        test_artifact_instance.save()
+                    
+                    test_artifact_instance = TestArtifacts.objects.create(
+                        container_runs=container_run,
+                        suite=container_run.suite,
+                        type='statistics',  # Replace with the actual type
+                    )
+                    with open(statistics_path, 'rb') as file:
+                        test_artifact_instance.files.save(os.path.basename(file.name), File(file))
+                        test_artifact_instance.save()
+                    
+                    test_artifact_instance = TestArtifacts.objects.create(
+                        container_runs=container_run,
+                        suite=container_run.suite,
+                        type='html_zip',  # Replace with the actual type
+                    )
+                    with open(logs_path, 'rb') as file:
+                        test_artifact_instance.files.save(os.path.basename(file.name), File(file))
+                        test_artifact_instance.save()
                         
-
-
-                    if directory_exists(videos_path):
-                        videos = list_files_in_directory(videos_path)
-                        result["videos"] = videos
-
-                    if directory_exists(results_path):
-                        results = list_files_in_directory(results_path)
-                        result["results"] = results
-                    
-                    for screenshot in result["screenshots"]:
-                        print(screenshot)
-                        test_artifact_instance = TestArtifacts.objects.create(
-                            container_runs=container_run,
-                            suite=container_run.suite,
-                            type='screenshot',  # Replace with the actual type
-                        )
-                        with open(screenshot, 'rb') as file:
-                            test_artifact_instance.files.save(os.path.basename(file.name), File(file))
-                            test_artifact_instance.save()
-                    
-                    for result_json in result["results"]:
-                        print(result_json)
-                        test_artifact_instance = TestArtifacts.objects.create(
-                            container_runs=container_run,
-                            suite=container_run.suite,
-                            type='result',  # Replace with the actual type
-                        )
-                        with open(result_json, 'rb') as file:
-                            test_artifact_instance.files.save(os.path.basename(file.name), File(file))
-                            test_artifact_instance.save()
-                            if "mochawesome.json" == os.path.basename(file.name):
-                                file_data = test_artifact_instance.files.read().decode('utf-8')
-                                data = json.loads(file_data)
-                                container_run.json = data
-                                container_run.save()
-                    
-                    for video in result["videos"]:
-                        print(video)
-                        test_artifact_instance = TestArtifacts.objects.create(
-                            container_runs=container_run,
-                            suite=container_run.suite,
-                            type='video',  # Replace with the actual type
-                        )
-                        with open(video, 'rb') as file:
-                            test_artifact_instance.files.save(os.path.basename(file.name), File(file))
-                            test_artifact_instance.save()
-                    
-                    # container.remove()
+                                      
+                    container.remove()
                     
                     print(container.status)
                     break
