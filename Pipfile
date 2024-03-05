@@ -15,6 +15,7 @@ colorama = "*"
 drf-spectacular = "*"
 django-crum = "*"
 jsbeautifier = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 
