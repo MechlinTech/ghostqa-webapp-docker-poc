@@ -158,4 +158,3 @@ def generate_assert_code(assert_type, selector, value):
         return ''
 
 # Example usage
-generate_cypress_test('tests.yaml')
