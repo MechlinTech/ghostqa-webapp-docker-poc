@@ -134,6 +134,8 @@ def generate_action_code(action):
         return f"""cy.get("{selector}").check();"""
     elif action_type == 'uncheck':
         return f"""cy.get("{selector}").uncheck();"""
+    elif action_type == 'dblclick':
+        return f"""cy.dblclick("{selector}");"""
     elif action_type == 'assert':
         return generate_assert_code(assert_type, selector, value)
     else:
