@@ -13,6 +13,24 @@
                 "runserver"
             ],
             "django": true
+        },   {
+            "name": "Django: makemigrations",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}\\ghostqa\\manage.py",
+            "args": [
+                "makemigrations"
+            ],
+            "django": true
+        }  , {
+            "name": "Django: migrate",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}\\ghostqa\\manage.py",
+            "args": [
+                "migrate"
+            ],
+            "django": true
         }
     ]
 }

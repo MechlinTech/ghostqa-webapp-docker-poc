@@ -19,8 +19,10 @@ from drf_spectacular.openapi import AutoSchema
 from drf_spectacular.utils import extend_schema
 from PIL import Image as PILImage
 from rest_framework import viewsets,mixins
+from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser
+from rest_framework.pagination import PageNumberPagination
 
 from django.conf import settings
 from ..models import TestArtifacts, TestContainersRuns, TestSuite
@@ -29,8 +31,8 @@ import os
 class TestSuiteV2ViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
     queryset = TestSuite.objects.all()
     serializer_class = TestSuiteSerializer
-
-    
+    pagination_class = PageNumberPagination
+    page_size = 10 
     def get_parser_classes(self):
         return [MultiPartParser]
     
@@ -49,10 +51,14 @@ class TestSuiteV2ViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
     @action(methods=['get'],detail=False)
     def sample_yaml(self,request,*args, **kwargs):
         try:
-             with open(os.path.join(settings.SAMPLES_PATH,'sample.yaml'), 'r') as file:
-                data = yaml.safe_load(file)
+            with open(os.path.join(settings.SAMPLES_PATH,'sample.json'), 'r') as file:
+                data = json.load(file)
                 yaml_data = yaml.dump(data, default_flow_style=False)
                 return HttpResponse(yaml_data, content_type='text/yaml')
+                
+            #  with open(os.path.join(settings.SAMPLES_PATH,'sample.yaml'), 'r') as file:
+            #     data = yaml.safe_load(file)
+            #     yaml_data = yaml.dump(data, default_flow_style=False)
         except FileNotFoundError:
             return HttpResponse('File not found', status=404)
         except yaml.YAMLError:
@@ -129,7 +135,7 @@ class TestSuiteV2ViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
         container_run_serilzer = TestContainersRunsSerializer(container_run)
         
         headers = self.get_success_headers(serializer.data)
-        return JsonResponse({
+        return Response({
            **self.get_serializer(instance).data
         })
     
@@ -177,7 +183,7 @@ class TestSuiteV2ViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
                     response.write(chunk)
 
             return response
-        return JsonResponse({
+        return Response({
             "error":"error"
         },status=400) 
         
@@ -187,7 +193,7 @@ class TestSuiteV2ViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
         container_run = get_object_or_404(TestContainersRuns,**kwargs)
         
         
-        return JsonResponse({
+        return Response({
             **TestContainersRunsSerializer(container_run).data
         })
         

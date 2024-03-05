@@ -11,11 +11,11 @@ def format_js_code(js_code):
         print(f"Error formatting JavaScript code: {e}")
         return js_code
 def generate_test_case_code(test_case):
-    test_case_name = list(test_case.keys())[0]
-    test_case_details = test_case[test_case_name]
-    case_name = test_case_details.get('name', "Unnamed Test Case")
-    before_each = test_case_details.get('beforeEach', [])
-    actions = test_case_details.get('actions', [])
+    # test_case_name = list(test_case.keys())[0]
+    # test_case_details = test_case[test_case_name]
+    case_name = test_case.get('name', "Unnamed Test Case")
+    before_each = test_case.get('beforeEach', [])
+    actions = test_case.get('actions', [])
 
     # return f"""
     #     describe('{case_name}', () => {{
@@ -41,11 +41,11 @@ def generate_cypress_testv2(test_suites):
             # Generate Cypress test code
             cypress_code = []
             for test_suite in test_suites:
-                suite_name = list(test_suite.keys())[0]
-                suite_details = test_suite[suite_name]
-                suite_name = suite_details.get('name', "Unnamed Suite")
-                test_cases = suite_details.get('testCases', [])
-                before_each = suite_details.get('beforeEach', [])
+                # suite_name = list(test_suite.keys())[0]
+                # suite_details = test_suite[suite_name]
+                suite_name = test_suite.get('name', "Unnamed Suite")
+                test_cases = test_suite.get('testCases', [])
+                before_each = test_suite.get('beforeEach', [])
                 # Cypress test code template
                 cypress_code.append(f"""
                     describe('{suite_name}', () => {{
