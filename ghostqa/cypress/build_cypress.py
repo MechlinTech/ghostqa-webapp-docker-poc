@@ -234,6 +234,8 @@ def generate_action_code(action,wrap_it=True):
                 cy.dblclick("{selector}");
             }});
         """
+    elif action_type == 'rightclick':
+        return f"""cy.rightclick({selector})"""
     elif action_type == 'assert':
         return generate_assert_code(assert_type, selector, value)
     else:
