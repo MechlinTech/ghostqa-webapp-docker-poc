@@ -208,10 +208,16 @@ def start_test_inside_conatinerV2(name, volume_path,container_run=None):
     print(f"{__name__}: volume_path: {volume_path}")
     
     # Build the Docker image from the Dockerfile
-    image, build_logs = client.images.build(path=volume_path, dockerfile=os.path.join(volume_path,'Dockerfile'), tag='ghost_qa_scypress')
-
+    image, build_logs = client.images.build(path=volume_path, dockerfile=os.path.join(volume_path,'Dockerfile'), tag='ghost_qa_cypress')
+    try:
+        for log in build_logs:
+            print("LOGS:",log)
+    except Exception as e:
+        print("Exception",e)
+        
+        
     container = client.containers.run(
-        image="ghost_qa_scypress",
+        image="ghost_qa_cypress",
         name=name,
         # remove=True,
         command='cypress run --reporter mochawesome --reporter-options reportDir="cypress/results",overwrite=false,html=false,json=true',

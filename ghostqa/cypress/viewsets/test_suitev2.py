@@ -111,7 +111,7 @@ class TestSuiteV2ViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
         create_directory(f"{volume_path}/e2e/cypress/e2e/")
          
         with open(
-                f"/automation-tests/{name}/cypress/e2e/cypress/e2e/{name}.cy.js", "w"
+                f"{volume_path}/e2e/cypress/e2e/{name}.cy.js", "w"
             ) as cypress_test_file:
                 cypress_test_file.write(cypress_code)
         
