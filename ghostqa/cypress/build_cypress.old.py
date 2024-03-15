@@ -10,12 +10,11 @@ def format_js_code(js_code):
     except Exception as e:
         print(f"Error formatting JavaScript code: {e}")
         return js_code
-def generate_test_case_code(test_case,before_each=None):
+def generate_test_case_code(test_case):
     # test_case_name = list(test_case.keys())[0]
     # test_case_details = test_case[test_case_name]
     case_name = test_case.get('name', "Unnamed Test Case")
-    if before_each == None:
-        before_each =  test_case.get('beforeEach', [])
+    before_each = test_case.get('beforeEach', [])
     actions = test_case.get('actions', [])
 
     # return f"""
@@ -28,22 +27,13 @@ def generate_test_case_code(test_case,before_each=None):
     #     }});
     # """
     return f"""
-            describe('{case_name}', () => {{
-                {generate_before_each(before_each)}
-                
+            it('{case_name}', () => {{
                 {generate_test_actions(actions)}
             }});
     """
-def generate_test_cases(test_cases,before_each):
+def generate_test_cases(test_cases):
     # Generate Cypress test code for each test case
-    cases = []
-    for test_case in test_cases:
-        result = generate_test_case_code(test_case,before_each)
-        cases.append(result)
-    return '\n'.join(cases)
-
-
-
+    return '\n'.join([generate_test_case_code(test_case) for test_case in test_cases])
 def generate_cypress_testv2(test_suites):
     try:
 
@@ -59,7 +49,8 @@ def generate_cypress_testv2(test_suites):
                 # Cypress test code template
                 cypress_code.append(f"""
                     describe('{suite_name}', () => {{
-                        {generate_test_cases(test_cases, before_each)}
+                        {generate_before_each(before_each)}
+                        {generate_test_cases(test_cases)}
                     }});
                 """)
 
@@ -103,18 +94,15 @@ def generate_before_each(before_each_actions):
     # Generate beforeEach Cypress actions based on the YAML file
     return f"""
         beforeEach(() => {{
-            {generate_test_actions(before_each_actions,False)}
+            {generate_test_actions(before_each_actions)}
         }});
     """
 
-def generate_test_actions(actions,wrap_it=True):
+def generate_test_actions(actions):
     # Generate Cypress actions based on the YAML file
-    actions = []
-    for action in actions:
-        actions.append(generate_action_code(action,wrap_it) )
-    return '\n'.join(actions)
+    return '\n'.join([generate_action_code(action) for action in actions])
 
-def generate_action_code(action,wrap_it=True):
+def generate_action_code(action):
     action_type = action.get('type', '')
     selector = action.get('selector', '')
     text = action.get('text', '')
@@ -127,109 +115,27 @@ def generate_action_code(action,wrap_it=True):
     duration = action.get('duration', 0)
 
     if action_type == 'visit':
-        if wrap_it:
-            name = f'Test Step: {action_type}: {selector}'
-            
-            return f"""
-                it('{name}', () => {{
-                    cy.visit("{selector}");
-                }});
-            """
-        else:
-            return f"""cy.visit("{selector}");""";
+        return f"""cy.visit("{selector}");"""
     elif action_type == 'click':
-        if wrap_it:
-            name = f'Test Step: {action_type}: {selector}'
-            
-            return f"""
-                it('{name}', () => {{
-                    cy.get("{selector}").click();
-                }});
-            """
         return f"""cy.get("{selector}").click();"""
     elif action_type == 'type':
-        if wrap_it:
-        
-            name = f'Test Step: {action_type}: {selector}'
-            
-            return f"""
-                it('{name}', () => {{
-                    cy.get("{selector}").type('{text}');
-                }});
-            """
         return f"""cy.get("{selector}").type('{text}');"""
     elif action_type == 'press':
-        if wrap_it:
-        
-            name = f'Test Step: {action_type}: {selector}'
-            
-            return f"""
-                it('{name}', () => {{
-                    cy.get('body').type('{key}');
-                }});
-            """
         return f"""cy.get('body').type('{key}');"""
     elif action_type == 'wait':
-        if wrap_it:
-            name = f'Test Step: {action_type}: {selector} seconds'
-            
-            return f"""
-                it('{name}', () => {{
-                cy.wait({duration});
-                }});
-            """
         return f"""cy.wait({duration});"""
     elif action_type == 'scroll':
-        if wrap_it:
-    
-            name = f'Test Step: {action_type}: {direction} {distance}'
-            
-            return f"""
-                it('{name}', () => {{
-                    cy.get('body').scroll{'Up' if direction == 'up' else 'Down'}({distance});
-                }});
-            """
         return f"""cy.get('body').scroll{'Up' if direction == 'up' else 'Down'}({distance});"""
     elif action_type == 'hover':
-        name = f'Test Step: {action_type}: {selector}'
-        
-        return f"""
-            it('{name}', () => {{
-                cy.get("{selector}").trigger('mouseover');
-            }});
-        """
+        return f"""cy.get("{selector}").trigger('mouseover');"""
     elif action_type == 'select':
-        name = f'Test Step: {action_type}: {selector} {option}'
-        
-        return f"""
-            it('{name}', () => {{
-                cy.get("{selector}").select('{option}');
-            }});
-        """
+        return f"""cy.get("{selector}").select('{option}');"""
     elif action_type == 'check':
-        name = f'Test Step: {action_type}: {selector}'
-        
-        return f"""
-            it('{name}', () => {{
-               cy.get("{selector}").check();
-            }});
-        """
+        return f"""cy.get("{selector}").check();"""
     elif action_type == 'uncheck':
-        name = f'Test Step: {action_type}: {selector}'
-        
-        return f"""
-            it('{name}', () => {{
-               cy.get("{selector}").uncheck();
-            }});
-        """
+        return f"""cy.get("{selector}").uncheck();"""
     elif action_type == 'dblclick':
-        name = f'Test Step: {action_type}: {selector}'
-        
-        return f"""
-            it('{name}', () => {{
-                cy.dblclick("{selector}");
-            }});
-        """
+        return f"""cy.dblclick("{selector}");"""
     elif action_type == 'assert':
         return generate_assert_code(assert_type, selector, value)
     else:
@@ -237,7 +143,6 @@ def generate_action_code(action,wrap_it=True):
 
 def generate_assert_code(assert_type, selector, value):
     if assert_type == 'exist':
-        # name = f'Test Step: assert {assert_type}: {selector} {value}'
         return f"""cy.get("{selector}").should('exist');"""
     elif assert_type == 'equal':
         return f"""cy.get("{selector}").should('have.text', '{value}');"""
