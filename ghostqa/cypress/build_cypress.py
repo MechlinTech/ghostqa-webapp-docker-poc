@@ -43,7 +43,28 @@ def generate_test_cases(test_cases,before_each):
     return '\n'.join(cases)
 
 
+def generate_cypress_testv3(test_suites):
+    try:
 
+
+            # Generate Cypress test code
+            cypress_code = []
+            for test_suite in test_suites:
+                # suite_name = list(test_suite.keys())[0]
+                # suite_details = test_suite[suite_name]
+                suite_name = test_suite.get('name', "Unnamed Suite")
+                test_cases = test_suite.get('testCases', [])
+                before_each = test_suite.get('beforeEach', [])
+                # Cypress test code template
+                cypress_code.append(f"""
+                    describe('{suite_name}', () => {{
+                        {generate_test_cases(test_cases, before_each)}
+                    }});
+                """)
+
+            return '\n'.join(cypress_code)    
+    except Exception as e:
+        print(f'Error generating Cypress tests: {e}')
 def generate_cypress_testv2(test_suites):
     try:
 
