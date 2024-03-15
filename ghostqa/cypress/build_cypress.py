@@ -232,51 +232,107 @@ def generate_action_code(action,wrap_it=True):
             """
         return f"""cy.get("{selector}").select('{option}');"""
     elif action_type == 'check':
-        name = f'Test Step: {action_type}: {selector}'
-        
-        return f"""
-            it('{name}', () => {{
-               cy.get("{selector}").check();
-            }});
-        """
+        if wrap_it:
+            name = f'Test Step: {action_type}: {selector}'
+            
+            return f"""
+                it('{name}', () => {{
+                cy.get("{selector}").check();
+                }});
+            """
+        return f"""cy.get("{selector}").check()"""
     elif action_type == 'uncheck':
-        name = f'Test Step: {action_type}: {selector}'
-        
-        return f"""
-            it('{name}', () => {{
-               cy.get("{selector}").uncheck();
-            }});
-        """
+        if wrap_it:    
+            name = f'Test Step: {action_type}: {selector}'
+            
+            return f"""
+                it('{name}', () => {{
+                cy.get("{selector}").uncheck();
+                }});
+            """
+        return f"""cy.get("{selector}").uncheck()"""
     elif action_type == 'dblclick':
-        name = f'Test Step: {action_type}: {selector}'
-        
-        return f"""
-            it('{name}', () => {{
-                cy.dblclick("{selector}");
-            }});
-        """
+        if wrap_it:
+            name = f'Test Step: {action_type}: {selector}'
+            
+            return f"""
+                it('{name}', () => {{
+                    cy.dblclick("{selector}");
+                }});
+            """
+        return f"""cy.dblclick("{selector}");"""
     elif action_type == 'rightclick':
+        if wrap_it:
+            name = f'Test Step: {action_type}: {selector}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get("{selector}").rightclick();  
+                }})
+            """
         return f"""cy.rightclick({selector})"""
     elif action_type == 'assert':
         return generate_assert_code(assert_type, selector, value)
     else:
         return ''
+# TODO more actions to be added.
 
-def generate_assert_code(assert_type, selector, value):
+def generate_assert_code(assert_type, selector, value, wrap_it=True):
     if assert_type == 'exist':
-        # name = f'Test Step: assert {assert_type}: {selector} {value}'
-        return f"""cy.get("{selector}").should('exist');"""
+        if wrap_it:
+            name = f'Assert Step: {assert_type}: {selector}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').should('exist');
+                }});
+            """
+        return f"cy.get('{selector}').should('exist');"
     elif assert_type == 'equal':
-        return f"""cy.get("{selector}").should('have.text', '{value}');"""
+        if wrap_it:
+            name = f'Assert Step: {assert_type}: {selector} {value}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').should('have.text', '{value}');
+                }});
+            """
+        return f"cy.get('{selector}').should('have.text', '{value}');"
     elif assert_type == 'contain':
-        return f"""cy.get("{selector}").should('include.text', '{value}');"""
+        if wrap_it:
+            name = f'Assert Step: {assert_type}: {selector} {value}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').should('include.text', '{value}');
+                }});
+            """
+        return f"cy.get('{selector}').should('include.text', '{value}');"
     elif assert_type == 'have.class':
-        return f"""cy.get("{selector}").should('have.class', '{value}');"""
+        if wrap_it:
+            name = f'Assert Step: {assert_type}: {selector} {value}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').should('have.class', '{value}');
+                }});
+            """
+        return f"cy.get('{selector}').should('have.class', '{value}');"
     elif assert_type == 'not.exist':
-        return f"""cy.get("{selector}").should('not.exist');"""
+        if wrap_it:
+            name = f'Assert Step: {assert_type}: {selector}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').should('not.exist');
+                }});
+            """
+        return f"cy.get('{selector}').should('not.exist');"
     elif assert_type == 'have.length':
-        return f"""cy.get("{selector}").should('have.length', {value});"""
+        if wrap_it:
+            name = f'Assert Step: {assert_type}: {selector} {value}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').should('have.length', {value});
+                }});
+            """
+        return f"cy.get('{selector}').should('have.length', {value});"
     else:
         return ''
+
 
 # Example usage
