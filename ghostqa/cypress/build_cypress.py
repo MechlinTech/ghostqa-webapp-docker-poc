@@ -31,7 +31,7 @@ def generate_test_case_code(test_case,before_each=None):
             describe('{case_name}', () => {{
                 {generate_before_each(before_each)}
                 
-                {generate_test_actions(actions)}
+                {generate_test_actions(actions,True)}
             }});
     """
 def generate_test_cases(test_cases,before_each):
@@ -109,10 +109,10 @@ def generate_before_each(before_each_actions):
 
 def generate_test_actions(actions,wrap_it=True):
     # Generate Cypress actions based on the YAML file
-    actions = []
+    actions_list = []
     for action in actions:
-        actions.append(generate_action_code(action,wrap_it) )
-    return '\n'.join(actions)
+        actions_list.append(generate_action_code(action,wrap_it) )
+    return '\n'.join(actions_list)
 
 def generate_action_code(action,wrap_it=True):
     action_type = action.get('type', '')
@@ -191,21 +191,25 @@ def generate_action_code(action,wrap_it=True):
             """
         return f"""cy.get('body').scroll{'Up' if direction == 'up' else 'Down'}({distance});"""
     elif action_type == 'hover':
-        name = f'Test Step: {action_type}: {selector}'
-        
-        return f"""
-            it('{name}', () => {{
-                cy.get("{selector}").trigger('mouseover');
-            }});
-        """
+        if wrap_it:
+            name = f'Test Step: {action_type}: {selector}'
+            
+            return f"""
+                it('{name}', () => {{
+                    cy.get("{selector}").trigger('mouseover');
+                }});
+            """
+        return f"""cy.get("{selector}").trigger('mouseover');"""
     elif action_type == 'select':
-        name = f'Test Step: {action_type}: {selector} {option}'
-        
-        return f"""
-            it('{name}', () => {{
-                cy.get("{selector}").select('{option}');
-            }});
-        """
+        if wrap_it:
+            name = f'Test Step: {action_type}: {selector} {option}'
+            
+            return f"""
+                it('{name}', () => {{
+                    cy.get("{selector}").select('{option}');
+                }});
+            """
+        return f"""cy.get("{selector}").select('{option}');"""
     elif action_type == 'check':
         name = f'Test Step: {action_type}: {selector}'
         
