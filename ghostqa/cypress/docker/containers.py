@@ -163,7 +163,7 @@ def monitor_docker_conatinerv2(container_id,volume_path):
                         with open(screenshot, 'rb') as file:
                             test_artifact_instance.files.save(os.path.basename(file.name), File(file))
                             test_artifact_instance.save()
-                    
+                    json_result_data = {}
                     for result_json in result["results"]:
                         print(result_json)
                         test_artifact_instance = TestArtifacts.objects.create(
@@ -174,11 +174,21 @@ def monitor_docker_conatinerv2(container_id,volume_path):
                         with open(result_json, 'rb') as file:
                             test_artifact_instance.files.save(os.path.basename(file.name), File(file))
                             test_artifact_instance.save()
-                            if "mochawesome.json" == os.path.basename(file.name):
-                                file_data = test_artifact_instance.files.read().decode('utf-8')
-                                data = json.loads(file_data)
-                                container_run.json = data
-                                container_run.save()
+                            base_name = os.path.basename(file.name)
+                            file_data = test_artifact_instance.files.read().decode('utf-8')
+                            data = json.loads(file_data)
+                            try:
+                                suite_name = data.get('results')[0]['file']
+                                path_parts = suite_name.split("/")
+                                file_name = path_parts[-1]
+                                file_name_parts = file_name.split(".")
+                                test_suite_name = file_name_parts[0]
+                                json_result_data[test_suite_name] = data
+                            except Exception as e:
+                                json_result_data[base_name] = data
+                                    
+                    container_run.json = json_result_data
+                    container_run.save()
                     
                     for video in result["videos"]:
                         print(video)
