@@ -6,6 +6,7 @@ services:
     ports:
       - "4444:4444"
       - "7900:7900"
+      - "5902:5900"
     shm_size: 2g
   
   video:

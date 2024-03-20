@@ -2,13 +2,13 @@ import pytest
 from selenium import webdriver
 GRID_HUB_URL = "http://localhost:4444/wd/hub"
 
-@pytest.fixture(scope="module")
-def driver():
+@pytest.fixture
+def driver(request):
     options = webdriver.ChromeOptions()
     driver = webdriver.Remote(command_executor=GRID_HUB_URL, options=options)
-    yield driver
-    driver.quit()
+    request.addfinalizer(driver.quit)
+    return driver
 
-def test_google_search(driver):
-    driver.get("https://www.google.com")
-    assert "Google" in driver.title
+def test_example(driver):
+    driver.get("https://www.example.com")
+    assert "Example Domain" in driver.title
