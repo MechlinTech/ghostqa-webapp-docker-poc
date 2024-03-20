@@ -1,0 +1,24 @@
+[
+    {
+        "name": "Test Nitin",
+        "beforeEach": [
+            {
+                "type": "visit",
+                "selector": "www.google.com"
+            }
+        ],
+        "testCases": [
+            {
+                "name": "test case 10",
+                "actions": [
+                    {
+                        "type": "click",
+                        "selector": "#password",
+                        "text": "desc",
+                        "IsOptional": false
+                    }
+                ]
+            }
+        ]
+    }
+]

@@ -206,6 +206,85 @@ class TestSuiteV2ViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
         return Response({
            **self.get_serializer(instance).data
         })
+        
+    @extend_schema(methods=['post'], request=TestSuiteSerializer)
+    @action(methods=['post'],detail=False)
+    def execute3(self,request,*args, **kwargs):
+        data = request.data
+        request_json = data.get('request_json', None)
+        print("Data from the request body : ",data)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        instance = serializer.instance
+        instance.request_json = request_json
+        instance.save()
+        
+        container_run = TestContainersRuns.objects.create(
+            suite = instance
+        )
+        container_run.container_name =  f"{instance.name}-{container_run.ref}"
+        container_run.container_status =  f"pending"
+        container_run.save()
+        try: # TODO we don't need this any more. Need to confirm from Diljot regarding this.
+            # Use request_json directly
+            tests = instance.request_json
+        except Exception as e:
+            return JsonResponse({
+                "Status": "Unable to parse JSON or yaml file",
+                "json": f"{e}",
+                "yaml": None
+            }, status=400)
+        
+        BASE_DIR  = settings.BASE_DIR
+        CYPRESS_CONFIG_PATH = os.path.abspath(os.path.join(BASE_DIR,"cypress","cypress"))
+        name = container_run.container_name
+        
+        volume_path = f"/automation-tests/{name}/cypress"
+        volume_path = get_full_path(volume_path)
+        volume_path = convert_to_unix_path(volume_path)
+        if settings.SHARED_PATH:
+                volume_path = f"{settings.SHARED_PATH}/{name}/cypress"
+        print(f"{__name__}: volume_path: {volume_path}")
+        
+        create_directory(f"{volume_path}")
+        copy_files_and_folders(CYPRESS_CONFIG_PATH,volume_path)       
+        create_directory(f"{volume_path}/e2e/cypress/e2e/")
+        cypress_code = []
+        
+        print("json type :", (type(instance.request_json)))
+        json_request = json.loads(instance.request_json)
+        print("json data type :", type(json_request))
+   
+        for suites in json_request: # using converted json
+            test_cases = suites.get('testCases', [])
+            before_each = suites.get('beforeEach', [])
+            result_cypress_code = f"{generate_test_cases(test_cases,before_each)}"
+            # result_cypress_code = format_javascript(cypress_code)
+            cypress_code.append(result_cypress_code)
+         
+            with open(
+                    f"{volume_path}/e2e/cypress/e2e/{suites['name']}.cy.js", "w"
+                ) as cypress_test_file:
+                    cypress_test_file.write(result_cypress_code)
+        
+
+        instance.cypress_code = "\n".join(cypress_code)
+        instance.save()       
+        
+       
+        
+        print("STARTING CONTAINER")
+        start_test_inside_conatinerV2(container_run.container_name,volume_path,container_run)
+
+        container_run_serilzer = TestContainersRunsSerializer(container_run)
+        
+        headers = self.get_success_headers(serializer.data)
+        return Response({
+           **self.get_serializer(instance).data
+        })
+        
+        
     @action(methods=['get'],detail=True)
     def get_file(self,request,*args, **kwargs):
         view_name = request.resolver_match.url_name

@@ -40,11 +40,12 @@ class TestContainersRunsSerializer(serializers.ModelSerializer):
             ]
         
 class TestSuiteSerializer(serializers.ModelSerializer):
-    scenarios_file = serializers.FileField()  # You may want to specify a custom upload_to path
+    # scenarios_file = serializers.FileField()  # You may want to specify a custom upload_to path
     name = serializers.CharField(max_length=1000)
     client_reference_id = serializers.CharField(required=False)
     container_runs = TestContainersRunsSerializer(many=True,read_only=True)
+    request_json = serializers.JSONField()
     
     class Meta:
         model = TestSuite
-        fields = ["id", "client_reference_id", "scenarios_file", "name","container_runs","cypress_code"]
+        fields = ["id", "client_reference_id", "name","container_runs","cypress_code", "request_json"]
