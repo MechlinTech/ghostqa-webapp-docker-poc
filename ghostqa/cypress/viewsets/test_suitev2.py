@@ -217,8 +217,7 @@ class TestSuiteV2ViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         instance = serializer.instance
-        instance.request_json = request_json
-        instance.save()
+
         
         container_run = TestContainersRuns.objects.create(
             suite = instance
@@ -251,12 +250,8 @@ class TestSuiteV2ViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
         copy_files_and_folders(CYPRESS_CONFIG_PATH,volume_path)       
         create_directory(f"{volume_path}/e2e/cypress/e2e/")
         cypress_code = []
-        
-        print("json type :", (type(instance.request_json)))
-        json_request = json.loads(instance.request_json)
-        print("json data type :", type(json_request))
    
-        for suites in json_request: # using converted json
+        for suites in instance.request_json: # using converted json
             test_cases = suites.get('testCases', [])
             before_each = suites.get('beforeEach', [])
             result_cypress_code = f"{generate_test_cases(test_cases,before_each)}"

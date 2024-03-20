@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.core.files import File
 import json
 from django.core.files.base import ContentFile
+from .request import TestSuiteSerializer as RequestTestSuiteSerializer
 class ExecuteSerializers(serializers.Serializer):
     upload_file = serializers.FileField()
     name = serializers.CharField(max_length=1000)
@@ -47,28 +48,28 @@ class TestSuiteSerializer(serializers.ModelSerializer):
     name = serializers.CharField(max_length=1000)
     client_reference_id = serializers.CharField(required=False)
     container_runs = TestContainersRunsSerializer(many=True,read_only=True)
-    request_json = serializers.JSONField()
+    request_json = RequestTestSuiteSerializer(many=True)
     
     class Meta:
         model = TestSuite
         fields = ["id", "client_reference_id", "name","container_runs","cypress_code","scenarios_file", "request_json"]
         
-    # def validate(self, attrs):
-    #     validated_data =  super().validate(attrs)
+    def validate(self, attrs):
+        validated_data =  super().validate(attrs)
         
-    #     if 'request_json' in validated_data:
-    #         json_data = json.dumps(validated_data.get('request_json'))
+        # if 'request_json' in validated_data:
+        #     json_data = json.dumps(validated_data.get('request_json'))
         
-    #         # Create an in-memory byte stream
-    #         byte_stream = BytesIO()
+        #     # Create an in-memory byte stream
+        #     byte_stream = BytesIO()
             
-    #         # Write the JSON data into the byte stream
-    #         byte_stream.write(json_data.encode())
+        #     # Write the JSON data into the byte stream
+        #     byte_stream.write(json_data.encode())
             
-    #         # Set the file pointer to the beginning of the byte stream
-    #         byte_stream.seek(0)
+        #     # Set the file pointer to the beginning of the byte stream
+        #     byte_stream.seek(0)
             
-    #         # Create a content file from the byte stream
-    #         content_file = ContentFile(byte_stream.read())
-    #         validated_data['scenarios_file'] = content_file
-    #     return validated_data
+        #     # Create a content file from the byte stream
+        #     content_file = ContentFile(byte_stream.read())
+        #     validated_data['scenarios_file'] = content_file
+        return validated_data
