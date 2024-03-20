@@ -16,6 +16,13 @@ drf-spectacular = "*"
 django-crum = "*"
 jsbeautifier = "*"
 django-cors-headers = "*"
+pytest = "*"
+selenium = "*"
+pytest-json = "*"
+pytest-html = "*"
+beautifulsoup4 = "*"
+pandas = "*"
+pytest-selenium = "*"
 
 [dev-packages]
 
