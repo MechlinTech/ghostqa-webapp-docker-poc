@@ -138,6 +138,7 @@ def generate_test_actions(actions,wrap_it=True):
 def generate_action_code(action,wrap_it=True):
     action_type = action.get('type', '')
     selector = action.get('selector', '')
+    not_selector = action.get('not_selector', '')
     text = action.get('text', '')
     option = action.get('option', '')
     assert_type = action.get('assertType', '')
@@ -160,6 +161,9 @@ def generate_action_code(action,wrap_it=True):
     expected_title = action.get('expected_title', '')
     expected_url = action.get('expected_url', '')
     expected_length = action.get('expected_length', 0)
+    prop_name = action.get('prop_name', '')
+    attribute_name = action.get('attribute_name', '')
+    expected_text = action.get('expected_text', '')
 
     if action_type == 'visit':
         if wrap_it:
@@ -560,6 +564,240 @@ def generate_action_code(action,wrap_it=True):
                 }});
             """
         return f"""cy.get('{selector}').should('have.length', {expected_length});"""    
+    elif action_type == 'blur_element':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Blur element {selector}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').blur();
+                }});
+            """
+        return f"""cy.get('{selector}').blur();"""
+    elif action_type == 'fixture':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Load fixture from file path {file_path}'
+            return f"""
+                it('{name}', () => {{
+                    cy.fixture('{file_path}');
+                }});
+            """
+        return f"""cy.fixture('{file_path}');"""
+    elif action_type == 'focus':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Focus on element {selector}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').focus();
+                }});
+            """
+        return f"""cy.get('{selector}').focus();"""
+    elif action_type == 'force_click':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Force click on element {selector}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').click({{ force: true }});
+                }});
+            """
+        return f"""cy.get('{selector}').click({{ force: true }});"""
+    elif action_type == 'select_first_element':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Select first element matching {selector}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').first();
+                }});
+            """
+        return f"""cy.get('{selector}').first();"""
+    elif action_type == 'select_last_element':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Select last element matching {selector}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').last();
+                }});
+            """
+        return f"""cy.get('{selector}').last();"""
+    elif action_type == 'location':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Check if location property {property_name} is {expected_value}'
+            return f"""
+                it('{name}', () => {{
+                    cy.location('{property_name}').should('eq', '{expected_value}');
+                }});
+            """
+        return f"""cy.location('{property_name}').should('eq', '{expected_value}');"""
+    elif action_type == 'next_element':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Select next element from {selector}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').next();
+                }});
+            """
+        return f"""cy.get('{selector}').next();"""
+    elif action_type == 'next_all_element':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Select all next elements from {selector}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').nextAll();
+                }});
+            """
+        return f"""cy.get('{selector}').nextAll();"""
+    elif action_type == 'not':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Check if element {selector} does not have class {not_selector}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').not('{not_selector}');
+                }});
+            """
+        return f"""cy.get('{selector}').not('{not_selector}');"""
+    elif action_type == 'title':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Check if page title is {expected_title}'
+            return f"""
+                it('{name}', () => {{
+                    cy.title().should('eq', '{expected_title}');
+                }});
+            """
+        return f"""cy.title().should('eq', '{expected_title}');"""
+    elif action_type == 'should_not_equal':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Check if element {selector} does not have value {expected_value}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').should('not.equal', '{expected_value}');
+                }});
+            """
+        return f"""cy.get('{selector}').should('not.equal', '{expected_value}');"""
+    elif action_type == 'should_include':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Check if element {selector} includes value {expected_value}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').should('include', '{expected_value}');
+                }});
+            """
+        return f"""cy.get('{selector}').should('include', '{expected_value}');"""
+    elif action_type == 'should_be_null':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Check if element {selector} is null'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').should('be.null');
+                }});
+            """
+        return f"""cy.get('{selector}').should('be.null');"""
+    elif action_type == 'should_be_empty':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Check if element {selector} is empty'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').should('be.empty');
+                }});
+            """
+        return f"""cy.get('{selector}').should('be.empty');"""
+    elif action_type == 'should_equal':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Check if element {selector} equals {expected_value}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').should('equal', '{expected_value}');
+                }});
+            """
+        return f"""cy.get('{selector}').should('equal', '{expected_value}');"""
+    elif action_type == 'should_be_greater_than':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Check if element {selector} is greater than {expected_value}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').should('be.greaterThan', '{expected_value}');
+                }});
+            """
+        return f"""cy.get('{selector}').should('be.greaterThan', '{expected_value}');"""
+    elif action_type == 'should_be_less_than':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Check if element {selector} is less than {expected_value}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').should('be.lessThan', '{expected_value}');
+                }});
+            """
+        return f"""cy.get('{selector}').should('be.lessThan', '{expected_value}');"""
+    elif action_type == 'have_attribute':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Check if element {selector} has attribute {attribute_name} with value {expected_value}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').should('have.attr', '{attribute_name}', '{expected_value}');
+                }});
+            """
+        return f"""cy.get('{selector}').should('have.attr', '{attribute_name}', '{expected_value}');"""
+    elif action_type == 'have_prop':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Check if element {selector} has prop {prop_name} with value {expected_value}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').should('have.prop', '{prop_name}', '{expected_value}');
+                }});
+            """
+        return f"""cy.get('{selector}').should('have.prop', '{prop_name}', '{expected_value}');"""
+    elif action_type == 'have_css_value':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Check if element {selector} has CSS property {property_name} with value {expected_value}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').should('have.css', '{property_name}', '{expected_value}');
+                }});
+            """
+        return f"""cy.get('{selector}').should('have.css', '{property_name}', '{expected_value}');"""
+    elif action_type == 'contain_text':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Check if element {selector} contains text {expected_text}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').should('contain', '{expected_text}');
+                }});
+            """
+        return f"""cy.get('{selector}').should('contain', '{expected_text}');"""
+    elif action_type == 'enter':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Type Enter in element {selector}'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').type('{enter}');
+                }});
+            """
+        return f"""cy.get('{selector}').type('{enter}');"""
+    elif action_type == 'should_be_hidden':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Check if element {selector} is hidden'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').should('be.hidden');
+                }});
+            """
+        return f"""cy.get('{selector}').should('be.hidden');"""
+    elif action_type == 'should_be_selected':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Check if element {selector} is selected'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').should('be.selected');
+                }});
+            """
+        return f"""cy.get('{selector}').should('be.selected');"""
+    elif action_type == 'should_be_checked':
+        if wrap_it:
+            name = f'Test Step: {action_type}: Check if element {selector} is checked'
+            return f"""
+                it('{name}', () => {{
+                    cy.get('{selector}').should('be.checked');
+                }});
+            """
+        return f"""cy.get('{selector}').should('be.checked');"""
     elif action_type == 'assert':
         return generate_assert_code(assert_type, selector, value)
     else:
