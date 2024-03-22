@@ -1,11 +1,20 @@
 from django.db import models
 import uuid
 # Create your models here.
+
 class PerformaceTestSuite(models.Model):
     test_file = models.FileField(upload_to='uploads/performace_tests/')  # You may want to specify a custom upload_to path
     name = models.CharField(max_length=1000)
     client_reference_id = models.CharField(max_length=250, null=True, blank=True)
     type = models.CharField(max_length=250, null=True, blank=True)
+    jthreads = models.CharField(max_length=250, null=True, blank=True)
+    jrampup = models.CharField(max_length=250, null=True, blank=True)
+    
+class JmeterTestConfig(models.Model):
+    duration = models.FileField(upload_to='uploads/performace_tests/')  # You may want to specify a custom upload_to path
+    total_number_of_users = models.CharField(max_length=1000)
+    ramp_up_time = models.CharField(max_length=250, null=True, blank=True)
+    ramp_up_steps = models.CharField(max_length=250, null=True, blank=True)
     jthreads = models.CharField(max_length=250, null=True, blank=True)
     jrampup = models.CharField(max_length=250, null=True, blank=True)
     

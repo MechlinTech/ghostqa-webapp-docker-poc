@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  jmeter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./jmeter-scripts:/jmeter-scripts
+    command:   -Jthreads=100 -Jrampup=20 -Jduration=20 -n -t /jmeter-scripts/demo.jmx -l /jmeter-scripts/results/demo.jtl -e -o /jmeter-scripts/results/html-results
+    # Optional: If you need to pass additional JMeter options
+    # command: -n -t /jmeter-scripts/your_test_script.jmx -l /jmeter-scripts/test_results.jtl -Jyour_option=value
+
+    # Optional: Expose JMeter server port (default is 1099)
+    # ports:
+    #   - "1099:1099"
+
+    # Optional: Environment variables
+    # environment:
+    #   - JMETER_HOME=/path/to/your/jmeter/home
+
+    # Optional: Network configurations
+    # networks:
+    #   - your_network
+
+    # Optional: Healthcheck configuration
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:1099"]
+
+# Optional: Define custom networks
+# networks:
+#   your_network:
+#     driver: bridge

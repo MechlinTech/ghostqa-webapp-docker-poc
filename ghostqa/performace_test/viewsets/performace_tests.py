@@ -20,7 +20,7 @@ from cypress.utils import (format_javascript,check_container_status, convert_to_
                            create_directory, directory_exists, get_full_path,copy_files_and_folders,
                            list_files_in_directory)
 
-from ..docker.containers import start_jmeter_test
+from ..docker.containers import start_jmeter_test2,start_jmeter_test
 class PerformaceViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
     queryset = PerformaceTestSuite.objects.all()
     serializer_class = PerformaceTestSuiteSerializer
@@ -28,15 +28,55 @@ class PerformaceViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
     def get_parser_classes(self):
         return [MultiPartParser]
     
-    @action(detail=True,methods=['GET'])
+    # @action(detail=True,methods=['GET'])
+    # def execute(self, request, *args, **kwargs):
+    #     instance = self.get_object()
+    #     container_run = TestContainersRuns.objects.create(
+    #         suite = instance,
+    #         container_status= f"pending"
+    #     )
+    #     container_run.container_name =  f"{instance.name}-{container_run.ref}"
+    #     container_run.save()
+        
+    #     name = container_run.container_name
+    #     volume_path = f"/tests/performace/{name}/"
+    #     volume_path = get_full_path(volume_path)
+    #     volume_path = convert_to_unix_path(volume_path)
+    #     if settings.SHARED_PATH:
+    #             volume_path = f"{settings.SHARED_PATH}/performace/{name}/"
+        
+    #     if instance.type == "jmeter":
+    #         create_directory(f"{volume_path}/html-results")
+    #         with open(f"{volume_path}/test.jmx", "wb") as file:
+    #             file.write(instance.test_file.read())
+                
+    #         print("STARTING CONTAINER")
+    #         start_jmeter_test(name,volume_path,instance.jthreads,instance.jrampup,container_run)
+            
+    #     return Response({
+    #         "status":   "success",
+    #         "data":self.get_serializer(instance).data
+    #     })
+    
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+    
+    @action(detail=False,methods=['POST'])
     def execute(self, request, *args, **kwargs):
-        instance = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        instance = serializer.instance
+        
         container_run = TestContainersRuns.objects.create(
             suite = instance,
             container_status= f"pending"
         )
         container_run.container_name =  f"{instance.name}-{container_run.ref}"
         container_run.save()
+        
+        BASE_DIR  = settings.BASE_DIR
+        JMETER_CONFIG_PATH = os.path.abspath(os.path.join(BASE_DIR,"performace_test","jmeter"))
         
         name = container_run.container_name
         volume_path = f"/tests/performace/{name}/"
@@ -46,19 +86,22 @@ class PerformaceViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
                 volume_path = f"{settings.SHARED_PATH}/performace/{name}/"
         
         if instance.type == "jmeter":
+            create_directory(f"{volume_path}")
+            copy_files_and_folders(JMETER_CONFIG_PATH,volume_path)                   
             create_directory(f"{volume_path}/html-results")
+            
             with open(f"{volume_path}/test.jmx", "wb") as file:
                 file.write(instance.test_file.read())
                 
             print("STARTING CONTAINER")
-            start_jmeter_test(name,volume_path,instance.jthreads,instance.jrampup,container_run)
+            start_jmeter_test2(name,volume_path,instance.jthreads,instance.jrampup,container_run)
             
         return Response({
             "status":   "success",
             "data":self.get_serializer(instance).data
         })
         
-        
+            
     @action(methods=['get'],detail=True)
     def get_file(self,request,*args, **kwargs):
         view_name = request.resolver_match.url_name
