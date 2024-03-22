@@ -16,6 +16,7 @@ services:
       - ./app/media:/app/media
       - /var/run/docker.sock:/var/run/docker.sock
       - /automation-tests:/automation-tests
+      - /tests/performace:/tests/performace
     ports:
       - "8010:8000"
     depends_on:
