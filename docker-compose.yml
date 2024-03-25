@@ -12,7 +12,7 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     environment:
       - SHARED_PATH=/automation-tests
-      - SHARED_PERFORMACE_PATH=/tests/performace
+      - SHARED_PERFORMACE_PATH=/tests/
     volumes:
       - ./app/media:/app/media
       - /var/run/docker.sock:/var/run/docker.sock

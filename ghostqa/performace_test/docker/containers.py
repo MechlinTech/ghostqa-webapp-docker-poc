@@ -6,7 +6,8 @@ from cypress.utils import list_files_in_directory,directory_exists
 from django.core.files import File
 from django.conf import settings
 BASE_DIR  = settings.BASE_DIR
-
+import logging  
+logger = logging.getLogger(__name__)
 CYPRESS_CONFIG_PATH = os.path.abspath(os.path.join(BASE_DIR,"cypress","cypress"))
 
 def get_container(id_or_name):
@@ -15,7 +16,7 @@ def get_container(id_or_name):
     return client.containers.get(id_or_name)
 
 
-def monitor_docker_conatinerv2(container,container_id,volume_path):
+def monitor_jmx_docker_conatiner(container,container_id,volume_path):
     # Simulate a time-consuming task
     while True:
         try:
@@ -41,15 +42,18 @@ def monitor_docker_conatinerv2(container,container_id,volume_path):
                     logs_path = f"{volume_path}/log.jtl"
                     statistics_path = f"{volume_path}/html-results/statistics.json"
                     html_path = f"{volume_path}/html-results"
-                    
+                    print('monitor_jmx_docker_conatiner: logs_path',logs_path)
+                    print('monitor_jmx_docker_conatiner: statistics_path',statistics_path)
                     test_artifact_instance = TestArtifacts.objects.create(
                         container_runs=container_run,
                         suite=container_run.suite,
                         type='logs',  # Replace with the actual type
                     )
+                    print('monitor_jmx_docker_conatiner: test_artifact_instance:' ,test_artifact_instance)
                     with open(logs_path, 'rb') as file:
                         test_artifact_instance.files.save(os.path.basename(file.name), File(file))
                         test_artifact_instance.save()
+                        print('monitor_jmx_docker_conatiner: file:' , file)
                     
                     test_artifact_instance = TestArtifacts.objects.create(
                         container_runs=container_run,
@@ -65,14 +69,14 @@ def monitor_docker_conatinerv2(container,container_id,volume_path):
                         container_run.save()
                         
                     
-                    test_artifact_instance = TestArtifacts.objects.create(
-                        container_runs=container_run,
-                        suite=container_run.suite,
-                        type='html_zip',  # Replace with the actual type
-                    )
-                    with open(logs_path, 'rb') as file:
-                        test_artifact_instance.files.save(os.path.basename(file.name), File(file))
-                        test_artifact_instance.save()
+                    # test_artifact_instance = TestArtifacts.objects.create(
+                    #     container_runs=container_run,
+                    #     suite=container_run.suite,
+                    #     type='html_zip',  # Replace with the actual type
+                    # )
+                    # with open(logs_path, 'rb') as file:
+                    #     test_artifact_instance.files.save(os.path.basename(file.name), File(file))
+                    #     test_artifact_instance.save()
                         
                                       
                     container.remove()
@@ -81,6 +85,7 @@ def monitor_docker_conatinerv2(container,container_id,volume_path):
                     break
         except Exception as e:
             print("Exception",e)
+            logger.exception(e)
             break
     
 
@@ -114,7 +119,7 @@ def start_jmeter_test(name, volume_path,Jthreads=10,Jrampup=10,container_run=Non
         container_run.save()
         
                 # Start the threaded task
-        thread = threading.Thread(target=monitor_docker_conatinerv2, args=(container,container_run.id,volume_path,))
+        thread = threading.Thread(target=monitor_jmx_docker_conatiner, args=(container,container_run.id,volume_path,))
         thread.start()
     return container
 
