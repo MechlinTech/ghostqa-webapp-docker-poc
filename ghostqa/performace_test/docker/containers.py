@@ -21,9 +21,14 @@ def monitor_jmx_docker_conatiner(container,container_id,volume_path):
     while True:
         try:
             container_run = TestContainersRuns.objects.get(id=container_id)
-            # container =  get_container(container_run.container_name)
+            try:
+                containe2r =  get_container(container_run.container_name)
+                print(containe2r)
+            except Exception as e:
+                print(e)
             container_data = container.wait()
-            if container_data['Error'] == None:
+            print("monitor_jmx_docker_conatiner",container_data)
+            if container_data.get('Error') == None:
                 container_run.container_id = container.id
                 container_run.container_status = container.status
                 container_run.container_labels = ""
