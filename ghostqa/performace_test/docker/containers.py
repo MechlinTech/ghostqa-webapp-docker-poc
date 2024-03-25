@@ -152,7 +152,7 @@ def start_jmeter_test2(name, volume_path,Jthreads=10,Jrampup=10,container_run=No
         container_run.save()
         
                 # Start the threaded task
-        thread = threading.Thread(target=monitor_docker_conatinerv2, args=(container,container_run.id,volume_path,))
+        thread = threading.Thread(target=monitor_jmx_docker_conatiner, args=(container,container_run.id,volume_path,))
         thread.start()
     return container
 
