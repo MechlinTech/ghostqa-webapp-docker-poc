@@ -132,6 +132,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 SHARED_PATH = os.environ.get('SHARED_PATH', None)
+SHARED_PERFORMACE_PATH = os.environ.get('SHARED_PERFORMACE_PATH', None)
 
 SAMPLES_PATH = os.path.join(BASE_DIR, 'cypress',"samples")
 

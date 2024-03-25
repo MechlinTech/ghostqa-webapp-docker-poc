@@ -42,8 +42,8 @@ class PerformaceViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
     #     volume_path = f"/tests/performace/{name}/"
     #     volume_path = get_full_path(volume_path)
     #     volume_path = convert_to_unix_path(volume_path)
-    #     if settings.SHARED_PATH:
-    #             volume_path = f"{settings.SHARED_PATH}/performace/{name}/"
+    #     if settings.SHARED_PERFORMACE_PATH:
+    #             volume_path = f"{settings.SHARED_PERFORMACE_PATH}/performace/{name}/"
         
     #     if instance.type == "jmeter":
     #         create_directory(f"{volume_path}/html-results")
@@ -82,8 +82,8 @@ class PerformaceViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
         volume_path = f"/tests/performace/{name}/"
         volume_path = get_full_path(volume_path)
         volume_path = convert_to_unix_path(volume_path)
-        if settings.SHARED_PATH:
-                volume_path = f"{settings.SHARED_PATH}/performace/{name}/"
+        if settings.SHARED_PERFORMACE_PATH:
+                volume_path = f"{settings.SHARED_PERFORMACE_PATH}/performace/{name}/"
         
         if instance.type == "jmeter":
             create_directory(f"{volume_path}")
