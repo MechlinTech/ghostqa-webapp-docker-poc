@@ -2,7 +2,7 @@ import json
 import mimetypes
 import os
 from io import BytesIO
-
+from django.core.files.base import File
 import yaml
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
@@ -15,6 +15,7 @@ from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from ..models import PerformaceTestSuite,TestContainersRuns,TestArtifacts
+from ..utils.jmx_file import replace_thread_group
 from ..serializers.performace_tests import PerformaceTestSuiteSerializer,TestContainersRunsSerializer,TestArtifactsSerializer
 from cypress.utils import (format_javascript,check_container_status, convert_to_unix_path,
                            create_directory, directory_exists, get_full_path,copy_files_and_folders,
@@ -90,8 +91,14 @@ class PerformaceViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
             copy_files_and_folders(JMETER_CONFIG_PATH,volume_path)                   
             create_directory(f"{volume_path}/html-results")
             
-            with open(f"{volume_path}/test.jmx", "wb") as file:
-                file.write(instance.test_file.read())
+            with open(f"{volume_path}/test.jmx", "w") as file:
+                jmx_text_content = replace_thread_group(instance.test_file.read())
+                file.write(jmx_text_content)
+            with open(f"{volume_path}/test.jmx", "rb") as file:
+                
+                container_run.test_file = File(file, "test.jmx")
+                container_run.save()
+                
                 
             print("STARTING CONTAINER")
             start_jmeter_test2(name,volume_path,instance.jthreads,instance.jrampup,container_run)

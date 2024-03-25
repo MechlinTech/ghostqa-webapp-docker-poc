@@ -30,6 +30,7 @@ class TestContainersRuns(models.Model):
     container_logs_str = models.TextField(null=True)
     ref = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     json = models.JSONField(null = True)
+    test_file = models.FileField(upload_to='uploads/performace_tests/TestContainersRuns/',null=True)  # You may want to specify a custom upload_to path
 
    
 class TestArtifacts(models.Model):

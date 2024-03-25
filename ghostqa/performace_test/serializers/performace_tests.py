@@ -28,6 +28,7 @@ class TestContainersRunsSerializer(serializers.ModelSerializer):
             'id',
             'container_id',
             'container_status',
+            'test_file',
             'container_labels',
             'container_name',
             'container_short_id',
