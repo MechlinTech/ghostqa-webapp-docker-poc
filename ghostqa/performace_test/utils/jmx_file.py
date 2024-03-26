@@ -21,6 +21,9 @@ def replace_thread_group(jmx_content,jmx_properties={}):
 
     # Find the existing ThreadGroup element
     thread_group = root.find(".//ThreadGroup")
+    if thread_group is None:
+        thread_group = root.find(".//com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup")
+        
     if thread_group:
         new_thread_group.tail = thread_group.tail
         thread_group.clear()
