@@ -145,7 +145,7 @@ def start_jmeter_test2(name, volume_path,Jthreads=10,Jrampup=10,container_run=No
         tty=True,
          volumes={
         volume_path: {'bind': '/jmeter-scripts', 'mode': 'rw'},
-        f"{volume_path}/bin/filename.csv": {'bind': '/opt/apache-jmeter-5.6.3/bin/filename.csv', 'mode': 'rw'}
+        # f"{volume_path}/bin/filename.csv": {'bind': '/opt/apache-jmeter-5.6.3/bin/filename.csv', 'mode': 'rw'}
         },
         detach=True,
     )
