@@ -37,6 +37,7 @@ class TestContainersRunsSerializer(serializers.ModelSerializer):
             'json',
             'suite',
             'container_logs_str',
+            'client_reference_id'
             ]
         
 class PerformaceTestSuiteSerializer(serializers.ModelSerializer):
