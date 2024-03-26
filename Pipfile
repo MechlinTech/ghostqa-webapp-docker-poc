@@ -23,6 +23,7 @@ pytest-html = "*"
 beautifulsoup4 = "*"
 pandas = "*"
 pytest-selenium = "*"
+django-filter = "*"
 
 [dev-packages]
 

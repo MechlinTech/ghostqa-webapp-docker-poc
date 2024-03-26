@@ -60,6 +60,45 @@ class PerformaceViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
     
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
+        
+    @action(detail=True,methods=['GET'])  
+    def execute_instance(self, request, *args, **kwargs):
+        
+        instance = self.get_object()
+        
+        container_run = TestContainersRuns.objects.create(
+            suite = instance,
+            container_status= f"pending"
+        )
+        container_run.container_name =  f"{instance.name}-{container_run.ref}"
+        container_run.client_reference_id = instance.client_reference_id
+        container_run.save()
+        
+        BASE_DIR  = settings.BASE_DIR
+        JMETER_CONFIG_PATH = os.path.abspath(os.path.join(BASE_DIR,"performace_test","jmeter"))
+        
+        name = container_run.container_name
+        volume_path = f"/tests/performace/{name}/"
+        volume_path = get_full_path(volume_path)
+        volume_path = convert_to_unix_path(volume_path)
+        if settings.SHARED_PERFORMACE_PATH:
+                volume_path = f"{settings.SHARED_PERFORMACE_PATH}/performace/{name}/"
+        
+        if instance.type == "jmeter":
+            create_directory(f"{volume_path}")
+            copy_files_and_folders(JMETER_CONFIG_PATH,volume_path)                   
+            create_directory(f"{volume_path}/html-results")
+            
+            with open(f"{volume_path}/test.jmx", "wb") as file:
+                file.write(instance.test_file.read())
+                
+            print("STARTING CONTAINER")
+            start_jmeter_test2(name,volume_path,instance.jthreads,instance.jrampup,container_run)
+            
+        return Response({
+            "status":   "success",
+            "data":self.get_serializer(instance).data
+        })
     
     @action(detail=False,methods=['POST'])
     def execute(self, request, *args, **kwargs):
@@ -73,6 +112,7 @@ class PerformaceViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
             container_status= f"pending"
         )
         container_run.container_name =  f"{instance.name}-{container_run.ref}"
+        container_run.client_reference_id = instance.client_reference_id
         container_run.save()
         
         BASE_DIR  = settings.BASE_DIR

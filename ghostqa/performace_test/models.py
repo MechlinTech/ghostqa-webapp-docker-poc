@@ -30,6 +30,7 @@ class TestContainersRuns(models.Model):
     container_logs_str = models.TextField(null=True)
     ref = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     json = models.JSONField(null = True)
+    client_reference_id = models.CharField(max_length=250, null=True, blank=True)
 
    
 class TestArtifacts(models.Model):
