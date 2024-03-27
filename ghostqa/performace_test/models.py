@@ -7,8 +7,10 @@ class PerformaceTestSuite(models.Model):
     name = models.CharField(max_length=1000)
     client_reference_id = models.CharField(max_length=250, null=True, blank=True)
     type = models.CharField(max_length=250, null=True, blank=True)
-    jthreads = models.CharField(max_length=250, null=True, blank=True)
-    jrampup = models.CharField(max_length=250, null=True, blank=True)
+    jthreads_total_user = models.CharField(max_length=250, null=True, blank=True, default='1') 
+    jrampup_time = models.IntegerField(null=True, blank=True, default=1)  # in seconds
+    jrampup_steps = models.IntegerField(null=True, blank=True, default=1)
+    durations = models.IntegerField(null=True, blank=True, default=1)  # in seconds
     
 class JmeterTestConfig(models.Model):
     duration = models.FileField(upload_to='uploads/performace_tests/')  # You may want to specify a custom upload_to path

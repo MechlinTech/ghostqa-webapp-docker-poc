@@ -63,6 +63,6 @@ class PerformaceTestSuiteSerializer(serializers.ModelSerializer):
         return data
     class Meta:
         model = PerformaceTestSuite
-        fields = ["id","name", "jrampup","jthreads","test_file", "client_reference_id", "container_runs","type"]
+        fields = ["id","name", "jrampup_time","jthreads_total_user", "jrampup_steps", "durations" ,"test_file", "client_reference_id", "container_runs","type"]
         read_only_fields = ["id","type","container_runs"]
 
