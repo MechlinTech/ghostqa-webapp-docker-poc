@@ -98,6 +98,32 @@ def list_files_in_directory(directory_path):
     return files_list
 
 
+def list_recurssive_files_in_directory(directory_path):
+    """
+    Recursively list all files in a directory and return a list of their full paths.
+    
+    Parameters:
+    - directory_path (str): The path of the directory to list files from.
+    
+    Returns:
+    - list: A list of full paths of files in the directory and its subdirectories.
+    """
+    files_list = []
+    
+    # Ensure the given path is a directory
+    if os.path.isdir(directory_path):
+        # Get the list of files and directories in the directory
+        for root, dirs, files in os.walk(directory_path):
+            # Iterate through files in the current directory
+            for file in files:
+                # Create full paths for each file
+                file_path = os.path.join(root, file)
+                # Append only if it's a file
+                if os.path.isfile(file_path):
+                    files_list.append(convert_to_unix_path(file_path))
+    
+    return files_list
+
 def directory_exists(directory_path):
     """
     Check if a directory exists.

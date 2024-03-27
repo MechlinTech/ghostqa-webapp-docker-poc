@@ -2,7 +2,7 @@ from .client import get_client
 from cypress.models import TestContainersRuns,TestArtifacts
 import threading
 import os,json
-from cypress.utils import list_files_in_directory,directory_exists
+from cypress.utils import list_files_in_directory,directory_exists,list_recurssive_files_in_directory
 from django.core.files import File
 from django.conf import settings
 BASE_DIR  = settings.BASE_DIR
@@ -135,12 +135,12 @@ def monitor_docker_conatinerv2(container_id,volume_path):
                         "videos":[],
                         "results":[],
                     }
-                    screenshots_path = f"{volume_path}/e2e/cypress/screenshots/{container_run.container_name}.cy.js"
+                    screenshots_path = f"{volume_path}/e2e/cypress/screenshots/"
                     videos_path = f"{volume_path}/e2e/cypress/videos"
                     results_path = f"{volume_path}/e2e/cypress/results"
                     
                     if directory_exists(screenshots_path):
-                        screenshots = list_files_in_directory(screenshots_path)
+                        screenshots = list_recurssive_files_in_directory(screenshots_path)
                         result["screenshots"] = screenshots
                         
 
