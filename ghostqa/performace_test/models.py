@@ -12,6 +12,13 @@ class PerformaceTestSuite(models.Model):
     jrampup_steps = models.IntegerField(null=True, blank=True, default=1)
     durations = models.IntegerField(null=True, blank=True, default=1)  # in seconds
     
+    
+class CSVData(models.Model):
+    suite = models.ForeignKey(PerformaceTestSuite, on_delete=models.CASCADE, related_name='csv_data')
+    name = models.CharField(max_length=250, blank=True, null=True)
+    csv_file = models.FileField('uploads/performance_tests/csv_file', blank=True, null=True)
+
+
 class JmeterTestConfig(models.Model):
     duration = models.FileField(upload_to='uploads/performace_tests/')  # You may want to specify a custom upload_to path
     total_number_of_users = models.CharField(max_length=1000)
