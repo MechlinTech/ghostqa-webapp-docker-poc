@@ -94,7 +94,7 @@ class PerformaceViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
                 file.write(instance.test_file.read())
                 
             print("STARTING CONTAINER")
-            start_jmeter_test2(name,volume_path,instance.jthreads,instance.jrampup,container_run)
+            start_jmeter_test2(name,volume_path,instance.jthreads_total_user,instance.jrampup_time,container_run)
             
         return Response({
             "status":   "success",
@@ -141,7 +141,7 @@ class PerformaceViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
                 
                 
             print("STARTING CONTAINER")
-            start_jmeter_test2(name,volume_path,instance.jthreads,instance.jrampup,container_run)
+            start_jmeter_test2(name,volume_path,instance.jthreads_total_user,instance.jrampup_time,container_run)
             
         return Response({
             "status":   "success",
@@ -178,7 +178,7 @@ class PerformaceViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
             create_directory(f"{volume_path}/html-results")
             
             with open(f"{volume_path}/test.jmx", "w") as file:
-                jmx_text_content = replace_thread_group(instance.test_file.read())
+                jmx_text_content = replace_thread_group(instance.test_file.read(), jmx_properties=request.data)
                 file.write(jmx_text_content)
             with open(f"{volume_path}/test.jmx", "rb") as file:
                 
@@ -187,7 +187,7 @@ class PerformaceViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
                 
                 
             print("STARTING CONTAINER")
-            start_jmeter_test2(name,volume_path,instance.jthreads,instance.jrampup,container_run)
+            start_jmeter_test2(name,volume_path,instance.jthreads_total_user,instance.jrampup_time,container_run)
             
         return Response({
             "status":   "success",

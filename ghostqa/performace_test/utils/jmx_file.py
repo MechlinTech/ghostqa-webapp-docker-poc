@@ -7,15 +7,22 @@ def replace_thread_group(jmx_content,jmx_properties={}):
     new_thread_txt = f'''
         <com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup guiclass="com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroupGui" testclass="com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup" testname="Login_Script" enabled="true">
             <elementProp name="ThreadGroup.main_controller" elementType="com.blazemeter.jmeter.control.VirtualUserController"/>
-            <stringProp name="Hold">{jmx_properties.get("hold",0)}</stringProp>
-            <stringProp name="Steps">{jmx_properties.get("Steps",10)}</stringProp>
-            <stringProp name="RampUp">{jmx_properties.get("RampUp",10)}</stringProp>
-            <stringProp name="TargetLevel">{jmx_properties.get("TargetLevel",10)}</stringProp>
-            <stringProp name="Iterations">{jmx_properties.get("Iterations",10)}</stringProp>
+            <stringProp name="Hold">{jmx_properties.get("durations",0)}</stringProp>
+            <stringProp name="Steps">{jmx_properties.get("jrampup_steps",10)}</stringProp>
+            <stringProp name="RampUp">{jmx_properties.get("jrampup_time",10)}</stringProp>
+            <stringProp name="TargetLevel">{jmx_properties.get("jthreads_total_user",10)}</stringProp>
+            <stringProp name="Iterations">{jmx_properties.get("Iterations",0)}</stringProp>
             <stringProp name="Unit">S</stringProp>
             <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         </com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup>
     '''
+    
+    # hold -> duration
+    # RampUp -> RampUp Time
+    # Steps -> RampUp Steps
+    # TargetLevel -> Total User
+    # 
+    
     new_thread_group = ET.fromstring(new_thread_txt)
 
 
