@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ..models import PerformaceTestSuite,TestContainersRuns,TestArtifacts
+from ..models import PerformaceTestSuite,TestContainersRuns,TestArtifacts, CSVData
 
 from django.urls import reverse
 
@@ -66,3 +66,33 @@ class PerformaceTestSuiteSerializer(serializers.ModelSerializer):
         fields = ["id","name", "jrampup_time","jthreads_total_user", "jrampup_steps", "durations" ,"test_file", "client_reference_id", "container_runs","type"]
         read_only_fields = ["id","type","container_runs"]
 
+
+class CSVDataserializer(serializers.ModelSerializer):
+    suite_data = serializers.SerializerMethodField()
+    csv_file = serializers.FileField()
+    # csv_file = serializers.ListField(child=serializers.FileField())
+    
+    class Meta:
+        model = CSVData
+        fields = ['id', 'suite', 'name', 'csv_file', 'suite_data']
+        
+    def get_suite_data(self, obj):
+        suite = obj.suite
+        if suite:
+            serializer = PerformaceTestSuiteSerializer(suite)
+            return serializer.data
+        return None
+        
+    def validate(self, data):
+        if 'csv_file' not in data:
+            raise serializers.ValidationError('CSV file is required')
+        return data
+    
+    # def create(self, validated_data):
+    #     csv_files = validated_data.pop('csv_file', [])
+    #     instance = super().create(validated_data)
+
+    #     for csv_file in csv_files:
+    #         instance.csv_file.create(csv_file=csv_file)
+
+    #     return instance
