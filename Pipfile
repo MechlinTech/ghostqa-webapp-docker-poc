@@ -24,6 +24,8 @@ beautifulsoup4 = "*"
 pandas = "*"
 pytest-selenium = "*"
 django-filter = "*"
+networkx = "*"
+matplotlib = "*"
 
 [dev-packages]
 
