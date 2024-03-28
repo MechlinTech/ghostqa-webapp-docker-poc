@@ -35,7 +35,7 @@ class TestContainersRunsSerializer(serializers.ModelSerializer):
             'ref',
             'runs_artifacts',
             'json',
-            'suite',
+            'suite','raw_data',
             'container_logs_str',
             'client_reference_id'
             ]

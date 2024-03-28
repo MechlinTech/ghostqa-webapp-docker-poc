@@ -5,7 +5,7 @@ class UserJourneyGraph:
         self.start_url = start_url
         self.graph = nx.DiGraph()
 
-    def add_interaction(self, source_url, destination_url, interaction_type):
+    def add_interaction(self, source_url, destination_url, interaction_type,*args,**kwargs):
         """
         Add an interaction between two pages in the user journey graph.
 
@@ -13,7 +13,7 @@ class UserJourneyGraph:
         :param destination_url: The URL of the page where the interaction leads to.
         :param interaction_type: Type of interaction (e.g., click, scroll, etc.).
         """
-        self.graph.add_edge(source_url, destination_url, interaction_type=interaction_type)
+        self.graph.add_edge(source_url, destination_url, interaction_type=interaction_type,*args,**kwargs)
 
     def visualize_graph(self):
         """
@@ -40,7 +40,9 @@ class UserJourneyGraph:
          # Draw edges with red color
         nx.draw_networkx_edges(self.graph, pos, edge_color='red', arrows=True)
         
-        plt.show()
+        plt.savefig('file_name.png')
+        plt.close()
+        # plt.show()
     
     def dfs_traversal(self, start_node=None):
         """
@@ -132,7 +134,6 @@ if __name__ == "__main__":
     for path in paths:
         print(path)
         
-    user_journey.visualize_graph_with_paths(paths)
     
     # Visualizing the graph
     user_journey.visualize_graph()
