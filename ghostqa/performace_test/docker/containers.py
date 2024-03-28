@@ -44,7 +44,7 @@ def monitor_jmx_docker_conatiner(container,container_id,volume_path):
                         "statistics":[],
                         "html_zip":[],
                     }
-                    logs_path = f"{volume_path}/log.jtl"
+                    logs_path = f"{volume_path}/log.csv"
                     statistics_path = f"{volume_path}/html-results/statistics.json"
                     html_path = f"{volume_path}/html-results"
                     print('monitor_jmx_docker_conatiner: logs_path',logs_path)
@@ -141,10 +141,11 @@ def start_jmeter_test2(name, volume_path,Jthreads=10,Jrampup=10,container_run=No
         image='jmeter_apline',
         name=name,
         remove=False,
-        command=f'-Jthreads={Jthreads} -Jrampup={Jrampup} -n -t /jmeter-scripts/test.jmx -l /jmeter-scripts/log.jtl -e -o /jmeter-scripts/html-results',
+        command=f'-Jthreads={Jthreads} -Jrampup={Jrampup} -n -t /jmeter-scripts/test.jmx -l /jmeter-scripts/log.csv -e -o /jmeter-scripts/html-results',
         tty=True,
          volumes={
-        volume_path: {'bind': '/jmeter-scripts', 'mode': 'rw'}
+        volume_path: {'bind': '/jmeter-scripts', 'mode': 'rw'},
+        # f"{volume_path}/bin/filename.csv": {'bind': '/opt/apache-jmeter-5.6.3/bin/filename.csv', 'mode': 'rw'}
         },
         detach=True,
     )
