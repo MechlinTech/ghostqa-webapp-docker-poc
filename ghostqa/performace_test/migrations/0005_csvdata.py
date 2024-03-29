@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("performace_test", "0003_remove_performacetestsuite_jrampup_and_more"),
+        ("performace_test", "0004_testcontainersruns_raw_data"),
     ]
 
     operations = [
