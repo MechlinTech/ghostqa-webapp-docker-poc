@@ -24,6 +24,7 @@ services:
     ports:
       - "8010:8000"
     networks:
+      core-infra:
       localnetwork:
         aliases:
           - web
@@ -43,6 +44,7 @@ services:
     ports:
       - "8000"
     networks:
+      core-infra:
       localnetwork:
         aliases:
           - web2
