@@ -128,32 +128,39 @@ def get_json_metrics(file_path):
     return results
 
 def calculate_bandwidth(df):
-    # Calculate bandwidth in bytes per second
-    df['bandwidth'] = df['bytes'] / df['elapsed']
+    try:
+        # Calculate bandwidth in bytes per second
+        df['bandwidth'] = df['bytes'] / df['elapsed']
 
-    # Fill NaN values with 0
-    df['bandwidth'].fillna(0, inplace=True)
-    return df
+        # Fill NaN values with 0
+        df['bandwidth'].fillna(0, inplace=True)
+    
+        return df
+    except:
+        pass
 
 
 def calculate_errors_per_second(df):
-    # Convert 'timeStamp' to datetime
+    try:
+        # Convert 'timeStamp' to datetime
 
-    # Calculate total elapsed time
-    total_duration_seconds = df['elapsed'].sum() / 1000  # Convert milliseconds to seconds
+        # Calculate total elapsed time
+        total_duration_seconds = df['elapsed'].sum() / 1000  # Convert milliseconds to seconds
 
-    # Calculate hits per second
-    hits_per_second = df.shape[0] / total_duration_seconds
+        # Calculate hits per second
+        hits_per_second = df.shape[0] / total_duration_seconds
 
-    # Calculate errors per second
-    errors_per_second = df[df['success'] == False].shape[0] / total_duration_seconds
+        # Calculate errors per second
+        errors_per_second = df[df['success'] == False].shape[0] / total_duration_seconds
 
-    # Add columns for hits per second and errors per second
-    df['Hits_Per_Second'] = hits_per_second
-    df['Errors_Per_Second'] = errors_per_second
+        # Add columns for hits per second and errors per second
+        df['Hits_Per_Second'] = hits_per_second
+        df['Errors_Per_Second'] = errors_per_second
 
-    # Convert 'timeStamp' back to Unix timestamp
-    return df
+        # Convert 'timeStamp' back to Unix timestamp
+        return df
+    except:
+        pass
     # # Convert 'timeStamp' column to datetime format
     # df['timeStamp_datetime'] = pd.to_datetime(df['timeStamp'], unit='ms')
 
@@ -176,18 +183,23 @@ def calculate_errors_per_second(df):
     # return df
 
 def calculate_hits_per_second(df):
-    # Convert 'timeStamp' column to datetime format
-    df['timeStamp'] = pd.to_datetime(df['timeStamp'], unit='ms')
+    try:
+        # Convert 'timeStamp' column to datetime format
+        df['timeStamp'] = pd.to_datetime(df['timeStamp'], unit='ms')
 
-    # Calculate Hits per second
-    df['Hits_per_second'] = df.groupby(pd.Grouper(key='timeStamp', freq='1s')).size()
+        # Calculate Hits per second
+        df['Hits_per_second'] = df.groupby(pd.Grouper(key='timeStamp', freq='1s')).size()
 
-    # Fill NaN values with 0
-    df['Hits_per_second'].fillna(0, inplace=True)
-    
+        # Fill NaN values with 0
+        df['Hits_per_second'].fillna(0, inplace=True)
+    except:
+        pass
 def calculate_90th_percentile(df):
-    df['percentile_90'] = df['elapsed'].quantile(0.90)
-    return df
+    try:
+        df['percentile_90'] = df['elapsed'].quantile(0.90)
+        return df
+    except:
+        pass
     # # Convert 'timeStamp' column to datetime format
     # df['timeStamp_datetime'] = pd.to_datetime(df['timeStamp'], unit='ms')
 
@@ -209,6 +221,11 @@ def csv_to_json(csv_file_path):
     df = pd.read_csv(csv_file_path)
         # Replace NaN values with None
     # calculate_hits_per_second(df)
+    df['Hits_Per_Second'] = 0
+    df['Errors_Per_Second'] = 0
+    df['bandwidth'] = 0
+    df['percentile_90'] = 0
+    
     df = calculate_errors_per_second(df)
     df = calculate_bandwidth(df)
     df = calculate_90th_percentile(df)
