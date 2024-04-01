@@ -215,7 +215,6 @@ def csv_to_json(csv_file_path):
     
     df.replace({np.nan: None}, inplace=True)
     # Drop the column 'timeStamp_datetime'
-    df.drop(columns=['timeStamp_datetime'], inplace=True)
     # Convert DataFrame to JSON
     json_data = df.to_dict(orient='records')
     with open("example.json", 'w') as json_file:
