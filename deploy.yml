@@ -24,7 +24,7 @@ services:
     ports:
       - "8010:8000"
     networks:
-      web:
+      localnetwork:
         aliases:
           - web
 
