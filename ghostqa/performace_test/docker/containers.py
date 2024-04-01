@@ -5,7 +5,7 @@ import os,json
 from cypress.utils import list_files_in_directory,directory_exists
 from django.core.files import File
 from django.conf import settings
-import pandas
+import pandas,time
 from ..utils.jmx_reporting import get_json_metrics,csv_to_json
 
 BASE_DIR  = settings.BASE_DIR
@@ -183,7 +183,7 @@ def monitor_jmx_docker_conatiner_With_live_reporting(container_originally_ran,co
                     print(container.status)
                     break
               
-                    
+            time.sleep(1)      
        
         except Exception as e:
             print("Exception",e)

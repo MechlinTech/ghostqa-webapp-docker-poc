@@ -133,26 +133,47 @@ def calculate_bandwidth(df):
 
     # Fill NaN values with 0
     df['bandwidth'].fillna(0, inplace=True)
+    return df
 
 
 def calculate_errors_per_second(df):
-    # Convert 'timeStamp' column to datetime format
-    df['timeStamp'] = pd.to_datetime(df['timeStamp'], unit='ms')
+    # Convert 'timeStamp' to datetime
 
-    # Filter the DataFrame to include only failed requests
-    failed_requests = df[df['success'] == False]
+    # Calculate total elapsed time
+    total_duration_seconds = df['elapsed'].sum() / 1000  # Convert milliseconds to seconds
+
+    # Calculate hits per second
+    hits_per_second = df.shape[0] / total_duration_seconds
 
     # Calculate errors per second
-    errors_per_second = failed_requests.groupby(pd.Grouper(key='timeStamp', freq='1s')).size()
+    errors_per_second = df[df['success'] == False].shape[0] / total_duration_seconds
 
-    # Fill NaN values with 0
-    errors_per_second.fillna(0, inplace=True)
+    # Add columns for hits per second and errors per second
+    df['Hits_Per_Second'] = hits_per_second
+    df['Errors_Per_Second'] = errors_per_second
 
-    # Create a new DataFrame to store errors per second
-    errors_df = pd.DataFrame(errors_per_second, columns=['Errors_per_second'])
+    # Convert 'timeStamp' back to Unix timestamp
+    return df
+    # # Convert 'timeStamp' column to datetime format
+    # df['timeStamp_datetime'] = pd.to_datetime(df['timeStamp'], unit='ms')
 
-    # Merge errors_per_second back to the original DataFrame
-    df = df.merge(errors_df, how='left', left_on='timeStamp', right_index=True)
+    # # Filter the DataFrame to include only failed requests
+    # failed_requests = df[df['success'] == False]
+
+    # # Calculate errors per second
+    # errors_per_second = failed_requests.groupby(pd.Grouper(key='timeStamp_datetime', freq='1s')).size()
+
+    # # Fill NaN values with 0
+    # errors_per_second.fillna(0, inplace=True)
+
+    # # Create a new DataFrame to store errors per second
+    # errors_df = pd.DataFrame(errors_per_second, columns=['Errors_per_second'])
+
+    # # Merge errors_per_second back to the original DataFrame
+    # df = df.merge(errors_df, how='left', left_on='timeStamp_datetime', right_index=True)
+    # df.drop(columns=['timeStamp_datetime'], inplace=True)
+    
+    # return df
 
 def calculate_hits_per_second(df):
     # Convert 'timeStamp' column to datetime format
@@ -165,32 +186,36 @@ def calculate_hits_per_second(df):
     df['Hits_per_second'].fillna(0, inplace=True)
     
 def calculate_90th_percentile(df):
-    # Convert 'timeStamp' column to datetime format
-    df['timeStamp'] = pd.to_datetime(df['timeStamp'], unit='ms')
+    df['percentile_90'] = df['elapsed'].quantile(0.90)
+    return df
+    # # Convert 'timeStamp' column to datetime format
+    # df['timeStamp_datetime'] = pd.to_datetime(df['timeStamp'], unit='ms')
 
-    # Convert 'elapsed' column to numeric if needed
-    df['elapsed'] = pd.to_numeric(df['elapsed'], errors='coerce')
+    # # Convert 'elapsed' column to numeric if needed
+    # df['elapsed'] = pd.to_numeric(df['elapsed'], errors='coerce')
 
-    # Calculate the 90th percentile response time
-    df['timeStamp'] = df['timeStamp'].dt.floor('s')  # Round down to nearest second
-    percentile_90 = df.groupby('timeStamp')['elapsed'].quantile(0.90)
+    # # Calculate the 90th percentile response time
+    # df['timeStamp_datetime'] = df['timeStamp_datetime'].dt.floor('s')  # Round down to nearest second
+    # percentile_90 = df.groupby('timeStamp_datetime')['elapsed'].quantile(0.90)
 
-    # Merge the 90th percentile data into the original DataFrame
-    df = df.merge(percentile_90, left_on='timeStamp', right_index=True, suffixes=('', '_90th_percentile'))
+    # # Merge the 90th percentile data into the original DataFrame
+    # df = df.merge(percentile_90, left_on='timeStamp_datetime', right_index=True, suffixes=('', '_90th_percentile'))
 
-    # Rename the column to indicate it contains the 90th percentile response time
-    df.rename(columns={'elapsed_90th_percentile': '90th_percentile_response_time'}, inplace=True)
+    # # Rename the column to indicate it contains the 90th percentile response time
+    # df.rename(columns={'elapsed_90th_percentile': '90th_percentile_response_time'}, inplace=True)
 
 def csv_to_json(csv_file_path):
     # Read the CSV file into a pandas DataFrame
     df = pd.read_csv(csv_file_path)
         # Replace NaN values with None
-    calculate_hits_per_second(df)
-    calculate_errors_per_second(df)
-    calculate_bandwidth(df)
-    calculate_90th_percentile(df)
+    # calculate_hits_per_second(df)
+    df = calculate_errors_per_second(df)
+    df = calculate_bandwidth(df)
+    df = calculate_90th_percentile(df)
     
     df.replace({np.nan: None}, inplace=True)
+    # Drop the column 'timeStamp_datetime'
+    df.drop(columns=['timeStamp_datetime'], inplace=True)
     # Convert DataFrame to JSON
     json_data = df.to_dict(orient='records')
     with open("example.json", 'w') as json_file:
