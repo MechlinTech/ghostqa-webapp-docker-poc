@@ -1,1 +1,1 @@
-docker stack deploy --prune -c docker-compose.yml ghost_qa_test
+docker stack deploy --prune -c deploy.yml ghostqa
