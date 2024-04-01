@@ -474,7 +474,7 @@ def generate_action_code(action,wrap_it=True):
                 }});
             """
         return f"""cy.get('{selector}').should('be.visible');"""
-    elif action_type == 'element_is_not_visible':
+    elif action_type == 'element_is_not_visible': # this is repeated action
         if wrap_it:
             name = f'Test Step: {action_type}: Check if element {selector} is not visible'
             return f"""
@@ -483,7 +483,7 @@ def generate_action_code(action,wrap_it=True):
                 }});
             """
         return f"""cy.get('{selector}').should('not.be.visible');"""
-    elif action_type == 'element_is_enabled':
+    elif action_type == 'element_is_enabled': # this is repeated action
         if wrap_it:
             name = f'Test Step: {action_type}: Check if element {selector} is enabled'
             return f"""
