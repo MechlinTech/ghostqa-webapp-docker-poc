@@ -2,12 +2,12 @@ version: '3.6'
 
 
 services:
-  db:
-    image: postgres
-    environment:
-      POSTGRES_DB: yourdbname
-      POSTGRES_USER: yourdbuser
-      POSTGRES_PASSWORD: yourdbpassword
+  # db:
+  #   image: postgres
+  #   environment:
+  #     POSTGRES_DB: yourdbname
+  #     POSTGRES_USER: yourdbuser
+  #     POSTGRES_PASSWORD: yourdbpassword
   web:
     image: ghostqa/ghostqa:latest
     build: .
