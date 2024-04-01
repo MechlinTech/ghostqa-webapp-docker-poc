@@ -150,6 +150,9 @@ def monitor_jmx_docker_conatiner_With_live_reporting(container_originally_ran,co
                         test_artifact_instance.files.save(os.path.basename(file.name), File(file))
                         test_artifact_instance.save()
                         print('monitor_jmx_docker_conatiner: file:' , file)
+                        raw_data = csv_to_json(logs_path)
+                        container_run.raw_data = raw_data
+                        container_run.save()
                     
                     test_artifact_instance = TestArtifacts.objects.create(
                         container_runs=container_run,
