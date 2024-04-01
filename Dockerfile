@@ -31,6 +31,9 @@ RUN pipenv install gunicorn
 # Copy project
 COPY ./ghostqa/ /app/
 
+CMD python manage.py collectstatic
+
+
 # Expose port
 EXPOSE 8000
 
