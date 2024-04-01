@@ -18,7 +18,12 @@ def calculate_metrics(data):
     metrics["errorCount"] = float(len(data[data["success"] == False]))
 
     # Error percentage
-    metrics["errorPct"] = float(metrics["errorCount"] / metrics["sampleCount"] * 100)
+    # metrics["errorPct"] = float(metrics["errorCount"] / metrics["sampleCount"] * 100)
+    
+    try:
+        metrics["errorPct"] = float(metrics["errorCount"] / metrics["sampleCount"] * 100)
+    except ZeroDivisionError:
+        metrics["errorPct"] = 0.0
 
     # Mean response time
     metrics["meanResTime"] = float(data["elapsed"].mean())
@@ -38,11 +43,27 @@ def calculate_metrics(data):
     metrics["pct3ResTime"] = float(data["elapsed"].quantile(0.03))
 
     # Throughput (requests per second)
-    metrics["throughput"] = float(metrics["sampleCount"] / (data["elapsed"].max() / 1000))
+    # metrics["throughput"] = float(metrics["sampleCount"] / (data["elapsed"].max() / 1000))
+
+    # # Calculate received and sent KBytes per second
+    # metrics["receivedKBytesPerSec"] = float(data["bytes"].sum() / (data["elapsed"].max() / 1000))
+    # metrics["sentKBytesPerSec"] = float(data["sentBytes"].sum() / (data["elapsed"].max() / 1000))
+    # Throughput (requests per second)
+    try:
+        metrics["throughput"] = float(metrics["sampleCount"] / (data["elapsed"].max() / 1000))
+    except ZeroDivisionError:
+        metrics["throughput"] = 0.0
 
     # Calculate received and sent KBytes per second
-    metrics["receivedKBytesPerSec"] = float(data["bytes"].sum() / (data["elapsed"].max() / 1000))
-    metrics["sentKBytesPerSec"] = float(data["sentBytes"].sum() / (data["elapsed"].max() / 1000))
+    try:
+        metrics["receivedKBytesPerSec"] = float(data["bytes"].sum() / (data["elapsed"].max() / 1000))
+    except ZeroDivisionError:
+        metrics["receivedKBytesPerSec"] = 0.0
+
+    try:
+        metrics["sentKBytesPerSec"] = float(data["sentBytes"].sum() / (data["elapsed"].max() / 1000))
+    except ZeroDivisionError:
+        metrics["sentKBytesPerSec"] = 0.0
 
     return transaction_name, metrics
 
@@ -67,18 +88,38 @@ def get_json_metrics(file_path):
         "transaction": "Total",
         "sampleCount": float(df.shape[0]),
         "errorCount": float(len(df[df["success"] == False])),
-        "errorPct": float(len(df[df["success"] == False]) / df.shape[0] * 100),
+        # "errorPct": float(len(df[df["success"] == False]) / df.shape[0] * 100),
         "meanResTime": float(df["elapsed"].mean()),
         "medianResTime": float(df["elapsed"].median()),
         "minResTime": float(df["elapsed"].min()),
         "maxResTime": float(df["elapsed"].max()),
         "pct1ResTime": float(df["elapsed"].quantile(0.01)),
         "pct2ResTime": float(df["elapsed"].quantile(0.02)),
-        "pct3ResTime": float(df["elapsed"].quantile(0.03)),
-        "throughput": float(df.shape[0] / (df["elapsed"].max() / 1000)),
-        "receivedKBytesPerSec": float(df["bytes"].sum() / (df["elapsed"].max() / 1000)),
-        "sentKBytesPerSec": float(df["sentBytes"].sum() / (df["elapsed"].max() / 1000))
+        "pct3ResTime": float(df["elapsed"].quantile(0.03))
+        # "throughput": float(df.shape[0] / (df["elapsed"].max() / 1000)),
+        # "receivedKBytesPerSec": float(df["bytes"].sum() / (df["elapsed"].max() / 1000)),
+        # "sentKBytesPerSec": float(df["sentBytes"].sum() / (df["elapsed"].max() / 1000))
     }
+    
+    try:
+        total_metrics["errorPct"] = float(len(df[df["success"] == False]) / df.shape[0] * 100)
+    except ZeroDivisionError:
+        total_metrics["errorPct"] = 0.0
+    
+    try:
+        total_metrics["throughput"] = float(df.shape[0] / (df["elapsed"].max() / 1000))
+    except ZeroDivisionError:
+        total_metrics["throughput"] = 0.0
+    
+    try:
+        total_metrics["receivedKBytesPerSec"] = float(df["bytes"].sum() / (df["elapsed"].max() / 1000))
+    except ZeroDivisionError:
+        total_metrics["receivedKBytesPerSec"] = 0.0
+        
+    try:
+        total_metrics["sentKBytesPerSec"] = float(df["sentBytes"].sum() / (df["elapsed"].max() / 1000))
+    except ZeroDivisionError:
+        total_metrics["sentKBytesPerSec"] = 0.0
 
     # Add total metrics to the results dictionary
     results["Total"] = total_metrics
