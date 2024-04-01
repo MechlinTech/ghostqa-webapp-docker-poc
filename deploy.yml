@@ -27,7 +27,25 @@ services:
       localnetwork:
         aliases:
           - web
-
+  web2:
+    image: ghostqa/ghostqa:latest
+    build: .
+    # command: python manage.py runserver 0.0.0.0:8000
+    command:  pipenv run gunicorn ghostqa.wsgi -w 4 -b 0.0.0.0:8000
+    environment:
+      - SHARED_PATH=/automation-tests
+      - SHARED_PERFORMACE_PATH=/tests/
+    volumes:
+      - ./app/media:/app/media
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /automation-tests:/automation-tests
+      - /tests/performace:/tests/performace
+    ports:
+      - "8000"
+    networks:
+      localnetwork:
+        aliases:
+          - web2
 networks:
   core-infra:
     external: true
