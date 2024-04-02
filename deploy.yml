@@ -24,7 +24,7 @@ services:
           - db
   
   web: &django_app
-    image: ghostqa/ghostqa:latest
+    image: ghostqa/codeengine:latest
     command:  pipenv run gunicorn ghostqa.wsgi -w 4 -b 0.0.0.0:8000
     environment:
       - SHARED_PATH=/automation-tests
