@@ -7,7 +7,7 @@ from django.core.files import File
 from django.conf import settings
 import pandas,time
 from ..utils.jmx_reporting import get_json_metrics,csv_to_json
-
+import pandas as pd 
 BASE_DIR  = settings.BASE_DIR
 import logging  
 logger = logging.getLogger(__name__)
@@ -95,7 +95,7 @@ def monitor_jmx_docker_conatiner(container,container_id,volume_path):
             print("Exception",e)
             logger.exception(e)
             break
-    
+
 def live_update_from_container(container_run,logs_path):
         try:
             raw_data = csv_to_json(logs_path)
@@ -104,7 +104,8 @@ def live_update_from_container(container_run,logs_path):
             data = get_json_metrics(logs_path)
             container_run.json = data
             container_run.save()
-            
+        except pd.errors.EmptyDataError as pe: 
+            pass   
         except Exception as e:
             logger.exception(e)
 
