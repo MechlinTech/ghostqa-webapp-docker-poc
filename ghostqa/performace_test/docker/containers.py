@@ -5,9 +5,9 @@ import os,json
 from cypress.utils import list_files_in_directory,directory_exists
 from django.core.files import File
 from django.conf import settings
-import pandas
+import pandas,time
 from ..utils.jmx_reporting import get_json_metrics,csv_to_json
-
+import pandas as pd 
 BASE_DIR  = settings.BASE_DIR
 import logging  
 logger = logging.getLogger(__name__)
@@ -95,7 +95,7 @@ def monitor_jmx_docker_conatiner(container,container_id,volume_path):
             print("Exception",e)
             logger.exception(e)
             break
-    
+
 def live_update_from_container(container_run,logs_path):
         try:
             raw_data = csv_to_json(logs_path)
@@ -104,7 +104,8 @@ def live_update_from_container(container_run,logs_path):
             data = get_json_metrics(logs_path)
             container_run.json = data
             container_run.save()
-            
+        except pd.errors.EmptyDataError as pe: 
+            pass   
         except Exception as e:
             logger.exception(e)
 
@@ -150,6 +151,9 @@ def monitor_jmx_docker_conatiner_With_live_reporting(container_originally_ran,co
                         test_artifact_instance.files.save(os.path.basename(file.name), File(file))
                         test_artifact_instance.save()
                         print('monitor_jmx_docker_conatiner: file:' , file)
+                        raw_data = csv_to_json(logs_path)
+                        container_run.raw_data = raw_data
+                        container_run.save()
                     
                     test_artifact_instance = TestArtifacts.objects.create(
                         container_runs=container_run,
@@ -180,7 +184,7 @@ def monitor_jmx_docker_conatiner_With_live_reporting(container_originally_ran,co
                     print(container.status)
                     break
               
-                    
+            time.sleep(1)      
        
         except Exception as e:
             print("Exception",e)
