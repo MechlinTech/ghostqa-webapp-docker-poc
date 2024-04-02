@@ -1,12 +1,13 @@
-version: '3'
+version: '3.6'
+
 
 services:
-  db:
-    image: postgres
-    environment:
-      POSTGRES_DB: yourdbname
-      POSTGRES_USER: yourdbuser
-      POSTGRES_PASSWORD: yourdbpassword
+  # db:
+  #   image: postgres
+  #   environment:
+  #     POSTGRES_DB: yourdbname
+  #     POSTGRES_USER: yourdbuser
+  #     POSTGRES_PASSWORD: yourdbpassword
   web:
     image: ghostqa/ghostqa:latest
     build: .
@@ -22,5 +23,14 @@ services:
       - /tests/performace:/tests/performace
     ports:
       - "8010:8000"
-    depends_on:
-      - db
+    networks:
+      core-infra:
+      localnetwork:
+        aliases:
+          - web
+
+networks:
+  core-infra:
+    external: true
+  localnetwork:
+    attachable: true
