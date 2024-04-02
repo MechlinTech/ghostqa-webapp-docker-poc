@@ -4,5 +4,6 @@ $composeFileUrl = "https://raw.githubusercontent.com/MechlinTech/ghostqa-webapp-
 # Download the Docker Compose file
 Invoke-WebRequest -Uri $composeFileUrl -OutFile "docker-compose.yml"
 
+docker pull ghostqa/ghostqa:latest
 # Run docker-compose up command
 docker compose up
