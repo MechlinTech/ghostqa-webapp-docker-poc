@@ -275,7 +275,7 @@ def generate_action_code(action,wrap_it=True):
             
             return f"""
                 it('{name}', () => {{
-                    cy.dblclick("{selector}");
+                    cy.get("{selector}").dblclick();
                 }});
             """
         return f"""cy.dblclick("{selector}");"""
