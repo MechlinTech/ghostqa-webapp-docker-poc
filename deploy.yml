@@ -18,6 +18,8 @@ services:
       POSTGRES_DB: "yourdatabase"  # Set your PostgreSQL database name here
     ports:
       - "5432:5432"  # Expose PostgreSQL port
+    volumes:
+      - ~/ghostqa/postgres-data:/var/lib/postgresql/data 
     networks:
       localnetwork:
         aliases:
