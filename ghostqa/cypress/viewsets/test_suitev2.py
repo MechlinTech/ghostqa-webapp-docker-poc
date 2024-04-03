@@ -254,13 +254,22 @@ class TestSuiteV2ViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
         for suites in instance.request_json: # using converted json
             test_cases = suites.get('testCases', [])
             before_each = suites.get('beforeEach', [])
-            result_cypress_code = f"{generate_test_cases(test_cases,before_each)}"
+            result_cypress_code = """
+            // Prevent Cypress from failing the test on uncaught errors
+            Cypress.on('uncaught:exception', (err, runnable) => {
+            // Log the error (optional)
+            console.error('Uncaught Exception:', err.message);
+            
+            // Return false to prevent Cypress from failing the test
+            return false;
+            }); \n\n\n""" + f"{generate_test_cases(test_cases,before_each)}"
             # result_cypress_code = format_javascript(cypress_code)
             cypress_code.append(result_cypress_code)
          
             with open(
                     f"{volume_path}/e2e/cypress/e2e/{suites['name']}.cy.js", "w"
                 ) as cypress_test_file:
+
                     cypress_test_file.write(result_cypress_code)
         
 

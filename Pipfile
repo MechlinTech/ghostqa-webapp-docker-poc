@@ -26,6 +26,9 @@ pytest-selenium = "*"
 django-filter = "*"
 networkx = "*"
 matplotlib = "*"
+dj-database-url = "*"
+django-mssql = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 

@@ -3,34 +3,57 @@ version: '3.6'
 
 services:
   # db:
-  #   image: postgres
+  #   image: mcr.microsoft.com/mssql/server:2019-latest
   #   environment:
-  #     POSTGRES_DB: yourdbname
-  #     POSTGRES_USER: yourdbuser
-  #     POSTGRES_PASSWORD: yourdbpassword
-  web:
-    image: ghostqa/ghostqa:latest
-    build: .
-    # command: python manage.py runserver 0.0.0.0:8000
+  #     SA_PASSWORD: "YourStrong@Passw0rd"  # Set your strong password here
+  #     ACCEPT_EULA: "Y"
+  #     MSSQL_PID: "Developer"
+  #   ports:
+  #     - "1433:1433"  # Expose MSSQL port
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: "yourusername"  # Set your PostgreSQL username here
+      POSTGRES_PASSWORD: "yourpassword"  # Set your PostgreSQL password here
+      POSTGRES_DB: "yourdatabase"  # Set your PostgreSQL database name here
+    ports:
+      - "5432:5432"  # Expose PostgreSQL port
+    networks:
+      localnetwork:
+        aliases:
+          - db
+  
+  web: &django_app
+    image: ghostqa/codeengine:latest
     command:  pipenv run gunicorn ghostqa.wsgi -w 4 -b 0.0.0.0:8000 -t 1000000000
     environment:
       - SHARED_PATH=/automation-tests
       - SHARED_PERFORMACE_PATH=/tests/
+      # - DATABASE_URL=mssql://sa:YourStrong@Passw0rd@db:1433/master
+      - DATABASE_URL=postgres://yourusername:yourpassword@db:5432/yourdatabase 
     volumes:
       - ./app/media:/app/media
       - /var/run/docker.sock:/var/run/docker.sock
       - /automation-tests:/automation-tests
       - /tests/performace:/tests/performace
     ports:
-      - "8010:8000"
+      - "8011:8000"
+    depends_on:
+      - db
+      - django_app_migrate
     networks:
-      core-infra:
       localnetwork:
         aliases:
           - web
+  
+  django_app_migrate:
+    <<: *django_app
+    command: python manage.py migrate
+    depends_on:
+      - db
+    ports:
+      - "5000"
 
 networks:
-  core-infra:
-    external: true
   localnetwork:
     attachable: true
