@@ -8,8 +8,10 @@ services:
       POSTGRES_USER: yourdbuser
       POSTGRES_PASSWORD: yourdbpassword
   web:
+    image: ghostqa/ghostqa:latest
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    # command: python manage.py runserver 0.0.0.0:8000
+    command:  pipenv run gunicorn ghostqa.wsgi -w 4 -b 0.0.0.0:8000 -t 1000000000
     environment:
       - SHARED_PATH=/automation-tests
       - SHARED_PERFORMACE_PATH=/tests/
