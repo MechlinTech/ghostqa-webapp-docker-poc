@@ -34,10 +34,10 @@ router.register(r"performance-container-runs",PerformanceContainersRunsViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path('api/',include('cypress.urls')),
-    path('api/', include(router.urls)),
-    path('api/docs/schema', SpectacularAPIView.as_view(), name='schema'),
-    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('api/docs/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    path('api/codeengine/', include(router.urls)),
+    path('api/codeengine/docs/schema', SpectacularAPIView.as_view(), name='schema'),
+    path('api/codeengine/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/codeengine/docs/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
 from django.conf import settings
 from django.conf.urls.static import static
