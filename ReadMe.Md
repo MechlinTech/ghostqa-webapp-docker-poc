@@ -17,12 +17,12 @@
 2. **Download and Execute Deployment Script:**
     - Run the following command in PowerShell:
         ```
-        powershell -ExecutionPolicy Bypass -Command "(New-Object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/MechlinTech/ghostqa-webapp-docker-poc/dockerzise/deploy.ps1', '.\deploy.ps1'); .\deploy.ps1"
+        powershell -ExecutionPolicy Bypass -Command "(New-Object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/MechlinTech/ghostqa-webapp-docker-poc/main/deploy.ps1', '.\deploy.ps1'); .\deploy.ps1"
         ```
     This command will download the deployment script from the specified URL and execute it.
 
 3. **Accessing the Deployed Web Application:**
-    - After successful deployment, open the URL [http://127.0.0.1:8011/api/docs/](http://127.0.0.1:8011/api/docs/) in your web browser.
+    - After successful deployment, open the URL [http://127.0.0.1:8010/api/docs/](http://127.0.0.1:8010/api/docs/) in your web browser.
     This URL will allow you to access the documentation for the deployed GhostQA web application.
 
 **Note:** 
