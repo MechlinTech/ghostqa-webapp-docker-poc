@@ -84,15 +84,20 @@ class PerformaceViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
         volume_path = convert_to_unix_path(volume_path)
         if settings.SHARED_PERFORMACE_PATH:
                 volume_path = f"{settings.SHARED_PERFORMACE_PATH}/performace/{name}/"
-        
+        csv_files = []
         if instance.type == "jmeter":
             create_directory(f"{volume_path}")
             copy_files_and_folders(JMETER_CONFIG_PATH,volume_path)                   
             create_directory(f"{volume_path}/html-results")
             
-            # with open(f"{volume_path}/test.jmx", "w") as file:
-            #     jmx_text_content = replace_thread_group(instance.test_file.read(), jmx_properties=request.data)
-            #     file.write(jmx_text_content)
+            for csv_file in instance.vsc_data.all():
+                try:           
+                    with open(f"{volume_path}/bin/{csv_file.name}", "w") as file:
+                        # jmx_text_content = replace_thread_group(instance.test_file.read(), jmx_properties=request.data)
+                        file.write(csv_file.csv_file.read())
+                        csv_files.append(csv_file.name)
+                except Exception as e:
+                    pass
                 
             # with open(f"{volume_path}/test.jmx", "wb") as file:
             #     file.write(instance.test_file.read())
@@ -106,7 +111,7 @@ class PerformaceViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
                 container_run.save()
                 
             print("STARTING CONTAINER")
-            start_jmeter_test2(name,volume_path,instance.jthreads_total_user,instance.jrampup_time,container_run)
+            start_jmeter_test2(name,volume_path,instance.jthreads_total_user,instance.jrampup_time,container_run, csv_file=csv_files)
             
         return Response({
             "status":   "success",

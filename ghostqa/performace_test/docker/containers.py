@@ -226,7 +226,11 @@ def start_jmeter_test(name, volume_path,Jthreads=10,Jrampup=10,container_run=Non
     return container
 
 
-def start_jmeter_test2(name, volume_path,Jthreads=10,Jrampup=10,container_run=None):
+def start_jmeter_test2(name, volume_path,Jthreads=10,Jrampup=10,container_run=None, csv_file=[]):
+    volume = {}
+    for file in csv_file:
+        volume[f"{volume_path}/bin/{file.name}"]= {'bind': '/opt/apache-jmeter-5.6.3/bin/{file.name}', 'mode': 'rw'}
+        
     client = get_client()
     # print('volume_path',volume_path)
     print(f"{__name__}: volume_path: {volume_path}")
@@ -242,6 +246,7 @@ def start_jmeter_test2(name, volume_path,Jthreads=10,Jrampup=10,container_run=No
         tty=True,
          volumes={
         volume_path: {'bind': '/jmeter-scripts', 'mode': 'rw'},
+        **volume
         # f"{volume_path}/bin/filename.csv": {'bind': '/opt/apache-jmeter-5.6.3/bin/filename.csv', 'mode': 'rw'}
         },
         detach=True,
