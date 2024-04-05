@@ -14,9 +14,9 @@ from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
-from ..models import PerformaceTestSuite,TestContainersRuns,TestArtifacts
+from ..models import PerformaceTestSuite,TestContainersRuns,TestArtifacts, CSVData
 from ..utils.jmx_file import replace_thread_group
-from ..serializers.performace_tests import PerformaceTestSuiteSerializer,TestContainersRunsSerializer,TestArtifactsSerializer
+from ..serializers.performace_tests import PerformaceTestSuiteSerializer,TestContainersRunsSerializer,TestArtifactsSerializer, CSVDataserializer
 from cypress.utils import (format_javascript,check_container_status, convert_to_unix_path,
                            create_directory, directory_exists, get_full_path,copy_files_and_folders,
                            list_files_in_directory)
@@ -84,17 +84,34 @@ class PerformaceViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
         volume_path = convert_to_unix_path(volume_path)
         if settings.SHARED_PERFORMACE_PATH:
                 volume_path = f"{settings.SHARED_PERFORMACE_PATH}/performace/{name}/"
-        
+        csv_files = []
         if instance.type == "jmeter":
             create_directory(f"{volume_path}")
             copy_files_and_folders(JMETER_CONFIG_PATH,volume_path)                   
             create_directory(f"{volume_path}/html-results")
             
-            with open(f"{volume_path}/test.jmx", "wb") as file:
-                file.write(instance.test_file.read())
+            for csv_file in instance.vsc_data.all():
+                try:           
+                    with open(f"{volume_path}/bin/{csv_file.name}", "w") as file:
+                        # jmx_text_content = replace_thread_group(instance.test_file.read(), jmx_properties=request.data)
+                        file.write(csv_file.csv_file.read())
+                        csv_files.append(csv_file.name)
+                except Exception as e:
+                    pass
+                
+            # with open(f"{volume_path}/test.jmx", "wb") as file:
+            #     file.write(instance.test_file.read())
+            
+            with open(f"{volume_path}/test.jmx", "w") as file:
+                jmx_text_content = replace_thread_group(instance.test_file.read(), jmx_properties=request.data)
+                file.write(jmx_text_content)
+            with open(f"{volume_path}/test.jmx", "rb") as file:
+                
+                container_run.test_file = File(file, "test.jmx")
+                container_run.save()
                 
             print("STARTING CONTAINER")
-            start_jmeter_test2(name,volume_path,instance.jthreads_total_user,instance.jrampup_time,container_run)
+            start_jmeter_test2(name,volume_path,instance.jthreads_total_user,instance.jrampup_time,container_run, csv_file=csv_files)
             
         return Response({
             "status":   "success",
@@ -249,3 +266,26 @@ class PerformaceViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
             **TestContainersRunsSerializer(container_run).data
         })
         
+    # @action(detail=False, methods=['POST'], serializer_class=CSVDataserializer)
+    # def upload_csv(self, request, pk=None):
+    #     performace_test_suite = self.get_object()
+    #     csv_serializer = CSVDataserializer(data=request.data)
+    #     if csv_serializer.is_valid():
+    #         csv_serializer.save(suite=performace_test_suite)
+    #         return Response(csv_serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(csv_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class CSVDataViewSet(mixins.CreateModelMixin,viewsets.ReadOnlyModelViewSet):
+    queryset = CSVData.objects.all()
+    serializer_class = CSVDataserializer
+    
+    @action(detail=False, methods=['post'])
+    def upload_csv(self, request):
+        csv_serializer = CSVDataserializer(data=request.data)
+        if csv_serializer.is_valid():
+            csv_serializer.save()
+            return Response(csv_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(csv_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    
+    
